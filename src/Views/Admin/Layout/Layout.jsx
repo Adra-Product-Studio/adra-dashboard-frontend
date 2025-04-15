@@ -4,12 +4,11 @@ import Sidebar from 'Components/Panel_compnent/Sidebar'
 import Images from 'Utils/Image';
 import { Outlet } from 'react-router-dom';
 import JsonData from 'Utils/JsonData';
-import { useSelector } from 'react-redux';
-import { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
+import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
 import { handleUpdateCanvasShow } from 'Views/Common/Action/Common_action';
 
 const Layout = () => {
-    const { commonState } = useSelector((state) => state);
+    const { commonState } = useCommonState();
     const { adminSidebarMenus } = JsonData()?.jsonOnly;
     const dispatch = useDispatch();
     const navigate = useCustomNavigate();

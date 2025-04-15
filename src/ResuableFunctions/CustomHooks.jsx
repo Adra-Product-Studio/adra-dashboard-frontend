@@ -1,18 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch as useReduxDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import { useEffect, useCallback } from 'react';
 import { useMemo } from 'react';
 import { updateScreenCurrentDimension } from 'Views/Common/Slice/Common_slice';
+import { createSelector } from '@reduxjs/toolkit';
+
+//                                                   Redux reusable memorized state                                                          //
+const selectCommonState = (state) => state.commonState;
+const selectInterviewState = (state) => state.interviewState;
+const selectAdminState = (state) => state.adminState;
+
+const selectMemoizedStates = createSelector(
+  [selectCommonState, selectInterviewState, selectAdminState],
+  (commonState, interviewState, adminState) => ({ commonState, interviewState, adminState })
+);
+
+const useCommonState = () => {
+  return useSelector(selectMemoizedStates);
+};
+export default useCommonState;
 
 
 //                                                   navigation hook                                                                         //
 export const useCustomNavigate = () => {
   const navigate = useNavigate();
 
-  const customNavigate = (path, options = {}) => {
+  const customNavigate = useCallback((path, options = {}) => {
     navigate(path, options);
-  };
+  }, [navigate]);
+
   return customNavigate;
 };
 
@@ -60,7 +77,7 @@ export const useSize = () => {
         }
       ))
     };
-    
+
     window.addEventListener("resize", windowSizeHandler);
 
     return () => {

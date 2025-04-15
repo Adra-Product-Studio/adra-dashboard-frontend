@@ -1,5 +1,4 @@
 {
-  "homepage": "https://AdraProductStudio.github.io/adra-dashboard-frontend",
   "name": "adra-dashboard-v0.1",
   "version": "0.1.0",
   "private": true,
@@ -36,8 +35,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -61,7 +58,6 @@
     ]
   },
   "devDependencies": {
-    "customize-cra": "^1.0.0",
-    "gh-pages": "^6.3.0"
-  }
+    "customize-cra": "^1.0.0"
+  } 
 }

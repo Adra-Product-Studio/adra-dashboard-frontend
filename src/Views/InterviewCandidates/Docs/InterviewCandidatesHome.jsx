@@ -1,8 +1,7 @@
 import React, { Fragment, useEffect } from 'react'
 import { Card } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 import { CalculateTestTime } from 'ResuableFunctions/CalculateTestTime';
-import { initializeDB, useDispatch } from 'ResuableFunctions/CustomHooks';
+import useCommonState, { initializeDB, useDispatch } from 'ResuableFunctions/CustomHooks';
 import { handleCloseTestAutomatic, handleCloseTestManual, handleGetQuestions, handleUpdateAnswer } from 'Views/InterviewCandidates/Action/interviewAction';
 import { getQuestionFromDb, updateRemainingTestTiming, updateSelectedQuestionIndex } from 'Views/InterviewCandidates/Slice/interviewSlice';
 import ProgressBarComp from 'Components/Progress/ProgressBar';
@@ -12,7 +11,7 @@ import InterviewCandidatesHeader from 'Components/Panel_compnent/InterviewCandid
 import Icons from 'Utils/Icons';
 
 const InterviewCandidatesHome = () => {
-    const { interviewState } = useSelector((state) => state);
+    const { interviewState } = useCommonState();
     // const { interviewRound } = JsonData()?.jsonOnly;
     const dispatch = useDispatch()
 

@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie'
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
+import { updateCreateCampaign } from "Views/Admin/Slice/AdminSlice";
 import { registerCandidateFailure, registerCandidateResponse, submitTestByManual, submitTestFailure, submitTestResponse, updateCandidateData, updateTimeOverCloseTest } from "Views/InterviewCandidates/Slice/interviewSlice";
 
 const commonSlice = createSlice({
     name: 'commonSlice',
     initialState: {
         modalShow: false,
-        moalSize: "md",
+        modalSize: "md",
         modal_from: null,
         modal_type: null,
         modal_close_btn: true,
@@ -85,7 +86,7 @@ const commonSlice = createSlice({
             return {
                 ...state,
                 modalShow: false,
-                moalSize: "md",
+                modalSize: "md",
                 modal_from: null,
                 modal_type: null,
                 modal_close_btn: true,
@@ -205,19 +206,6 @@ const commonSlice = createSlice({
             }
         },
 
-        updateEditedTrue(state, action) {
-            return {
-                ...state,
-                edited: true
-            }
-        },
-        updateEditedFalse(state, action) {
-            return {
-                ...state,
-                edited: false
-            }
-        },
-
         //reset all menus
         updateResetAllMenus(state, action) {
             return {
@@ -320,12 +308,22 @@ const commonSlice = createSlice({
             return {
                 ...state,
                 modalShow: false,
-                moalSize: "md",
+                modalSize: "md",
                 modal_from: null,
                 modal_type: null,
                 modal_close_btn: true,
                 token: null,
                 user_role: null
+            }
+        },
+
+        updateOverallModalData(state, action) {
+            return {
+                ...state,
+                modalShow: true,
+                modalSize: action.payload.size,
+                modal_from: action.payload.from,
+                modal_type: action.payload.type
             }
         }
     },
@@ -338,7 +336,7 @@ const commonSlice = createSlice({
             .addCase(registerCandidateResponse, (state, action) => {
                 state.usernamee = action.payload?.username
                 state.passwordd = action.payload?.password
-                state.moalSize = "md"
+                state.modalSize = "md"
                 state.modal_from = "interview_candidate"
                 state.modal_type = "registration_completed"
                 state.modalShow = true
@@ -350,7 +348,7 @@ const commonSlice = createSlice({
             })
 
             .addCase(submitTestByManual, (state, action) => {
-                state.moalSize = "md"
+                state.modalSize = "md"
                 state.modal_from = "interview_candidate"
                 state.modal_type = "submit_confirmation"
                 state.modalShow = true
@@ -358,7 +356,7 @@ const commonSlice = createSlice({
             })
 
             .addCase(submitTestResponse, (state, action) => {
-                state.moalSize = "xl"
+                state.modalSize = "xl"
                 state.modal_from = "interview_candidate"
                 state.modal_type = "test_completed"
                 state.modalShow = true
@@ -372,12 +370,13 @@ const commonSlice = createSlice({
             .addCase(updateTimeOverCloseTest, (state, action) => {
                 state.usernamee = action.payload?.username
                 state.passwordd = action.payload?.password
-                state.moalSize = "xl"
+                state.modalSize = "xl"
                 state.modal_from = "interview_candidate"
                 state.modal_type = "time_finished"
                 state.modalShow = true
                 state.modal_close_btn = false
             })
+
     }
 })
 
@@ -415,7 +414,8 @@ export const {
     updateApplyFilterClickedFalse,
 
     updateEntriesCount,
-    closeTestMode
+    closeTestMode,
+    updateOverallModalData
 } = actions;
 
 export default reducer

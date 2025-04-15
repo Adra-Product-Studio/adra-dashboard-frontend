@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useCustomNavigate } from 'ResuableFunctions/CustomHooks';
+import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks';
 import { updateToast } from 'Views/Common/Slice/Common_slice';
 
 const AdminAuth = () => {
-    const { user_role, token, currentMenuName } = useSelector((state) => state?.commonState);
+    const { commonState } = useCommonState();
     const dispatch = useDispatch();
     const navigate = useCustomNavigate();
 
     useEffect(() => {
-        if (user_role !== "admin" || !token) {
+        if (commonState?.user_role !== "admin" || !commonState?.token) {
             dispatch(updateToast({ message: "Access Denied", type: "error" }))
         }
 
-        if (["dashboard"]?.includes(currentMenuName)) {
-            console.log(currentMenuName)
+        if (["dashboard"]?.includes(commonState?.currentMenuName)) {
             navigate("/dashboard/home")
         }
-    }, [currentMenuName, user_role, token])
+    }, [commonState?.currentMenuName, commonState?.user_role, commonState?.token])
 
-    return user_role === "admin" && token ? <Outlet /> : <Navigate to="/" />
+    return commonState?.user_role === "admin" && commonState?.token ? <Outlet /> : <Navigate to="/" />
+
+    return <Outlet />
 }
 
 export default AdminAuth
