@@ -11,12 +11,13 @@ import InterviewCandidatesAuth from "Views/InterviewCandidates/Docs/InterviewCan
 import CandidateStatus from "CandidateStatus";
 import AdminAuth from "Views/Admin/Docs/AdminAuth";
 import Layout from "Views/Admin/Layout/Layout";
+import Campaign from'Views/Admin/Docs/Campaign';
 
 
 const App = () => {
 
   return (
-    <HelmetProvider >
+    <HelmetProvider>
       <ToastContainer theme='light' />
       <Routes>
         <Route element={<InitializeProjectSetup />}>
@@ -37,7 +38,7 @@ const App = () => {
               <Route path="employees" element={<p>employees</p>} />
               <Route path="attendance" element={<p>attendance</p>} />
               <Route path="payroll" element={<p>payroll</p>} />
-              <Route path="interview" element={<p>interview</p>} />
+              <Route path="interview" element={<Campaign />} />
               <Route path="circular" element={<p>circular</p>} />
               <Route path="invoices" element={<p>invoices</p>} />
               <Route path="notes" element={<p>notes</p>} />

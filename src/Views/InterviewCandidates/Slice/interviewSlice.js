@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { initializeDB } from "ResuableFunctions/CustomHooks";
+import { loginResponse } from "Views/Common/Slice/Common_slice";
 
 const interviewSlice = createSlice({
     name: "Interview_slice",
@@ -96,6 +97,7 @@ const interviewSlice = createSlice({
                 ...state,
                 generatedQuestions: action?.payload?.assigned_questions || [],
                 test_end_timeStamp: action?.payload?.test_EndedOn || null,
+                isDataPresentInIndexedDb: action?.payload?.assigned_questions ? true : false,
                 initialGlow: false
             }
         },
@@ -113,6 +115,8 @@ const interviewSlice = createSlice({
                 selectedQuestionIndex: action.payload
             }
         },
+
+        //Update answer and 
         updateAnswers(state, action) {
             const answeredQues = action.payload?.filter((v) => v?.candidate_answer !== '')
 
@@ -150,9 +154,7 @@ const interviewSlice = createSlice({
             }
         },
         submitTestByManual(state, action) {
-            return {
-                ...state
-            }
+            return { ...state }
         },
         submitTestResponse(state, action) {
             return {
@@ -181,6 +183,15 @@ const interviewSlice = createSlice({
                 generatedQuestions: []
             }
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginResponse, (state, action) => {
+                state.isDataPresentInIndexedDb = false
+                state.generatedQuestions = []
+                state.test_end_timeStamp = null
+                state.calculate_remaining_time = null
+            })
     }
 })
 

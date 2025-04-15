@@ -9,10 +9,11 @@ import Icons from "Utils/Icons";
 import Checkbox from "Components/Input/Checkbox";
 
 export function Inputfunctions(funBy) {
+    console.log(funBy)
     return funBy?.map((ipVal, iPInd) => {
         switch (ipVal?.category) {
             case "heading":
-                return <div className={ipVal?.divClassName} >
+                return <div className={ipVal?.divClassName} key={iPInd}>
                     {
                         iPInd !== 0 ?
                             <hr className="bg-secondary" />
@@ -23,7 +24,7 @@ export function Inputfunctions(funBy) {
                 </div>
 
             case "select":
-                return <div className={ipVal?.divClassName} >
+                return <div className={ipVal?.divClassName} key={iPInd}>
                     {
                         ipVal?.type !== "normal_select" ?
                             <Fragment>
@@ -63,7 +64,7 @@ export function Inputfunctions(funBy) {
                 </div >
 
             case "googleLocation":
-                return <div className={ipVal?.divClassName}>
+                return <div className={ipVal?.divClassName} key={iPInd}>
                     <GoogleLocationInput
                         name={ipVal?.name}
                         value={ipVal?.value}
@@ -184,13 +185,13 @@ export function Inputfunctions(funBy) {
                             mandatory={ipVal?.isMandatory}
                             inputError={ipVal?.Err}
                             disabled={ipVal?.disabled}
-                            // max={ipVal?.name === "To Date" || ipVal?.name === "From Date" ? new Date().toISOString().split('T')[0] : null}
-                            // min={ipVal?.name === "Next call date" ? new Date().toISOString().split('T')[0] : null}
+                            max={ipVal?.is_max ? new Date().toISOString().split('T')[0] : null}
+                            min={ipVal?.is_min ? new Date().toISOString().split('T')[0] : null}
                         />
                     </div>
 
             case "Checkbox":
-                return <div className={ipVal?.divClassName}>
+                return <div className={ipVal?.divClassName} key={iPInd}>
                     <Checkbox
                         formType={ipVal?.type}
                         formLabel={ipVal?.name}
@@ -204,7 +205,7 @@ export function Inputfunctions(funBy) {
                 </div>
 
             case "textbox":
-                return <div className={ipVal?.divClassName}>
+                return <div className={ipVal?.divClassName} key={iPInd}>
                     <Textbox
                         value={ipVal?.value}
                         change={ipVal?.change}

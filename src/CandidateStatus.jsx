@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,98 +12,173 @@ import {
   Cell,
 } from "recharts";
 
-// Sample data for each card
-const cardData = [
-  { id: 1, name: "Candidate 1", Quantitative: 20, Technical: 40 },
-  { id: 2, name: "Candidate 2", Quantitative: 15, Technical: 25 },
-  { id: 3, name: "Candidate 3", Quantitative: 5, Technical: 18 },
-  { id: 4, name: "Candidate 4", Quantitative: 12, Technical: 35 },
-  { id: 5, name: "Candidate 5", Quantitative: 22, Technical: 42 },
-  { id: 6, name: "Candidate 6", Quantitative: 12, Technical: 19 },
-];
-
-// Custom color logic for Q/NQ
+// Custom function to determine bar color
 const getBarColor = (name, value) => {
-  if (
-    (name === "Quantitative" && value > 10) ||
+  return (name === "Quantitative" && value > 10) ||
     (name === "Technical" && value > 20)
-  ) {
-    return "#588B8B"; // Green for Q
-  }
-  return "#C8553D"; // Red for NQ
+    ? "#588B8B"
+    : "#C8553D";
 };
 
-// Custom label logic for Q/NQ
+// Custom Label Renderer to prevent overlap
 const renderCustomizedLabel = (props) => {
   const { x, y, width, value, name } = props;
   const radius = 15;
 
-  const label =
-    (name === "Quantitative" && value > 10) ||
-    (name === "Technical" && value > 20)
-      ? value
-      : value;
+  const adjustedY = y - radius < 20 ? y + radius + 10 : y - radius;
 
   return (
     <g>
-      <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#8884d8" />
+      <circle cx={x + width / 2} cy={adjustedY} r={radius} fill="#8884d8" />
       <text
         x={x + width / 2}
-        y={y - radius}
+        y={adjustedY}
         fill="#fff"
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {label}
+        {value}
       </text>
     </g>
   );
 };
 
-// Card component that renders chart inside
+// Candidate Card component
 const CandidateCard = ({ candidate }) => {
-  const chartData = [
-    { name: "Quantitative", value: candidate.Quantitative },
-    { name: "Technical", value: candidate.Technical },
-  ];
+    const [timeLeft, setTimeLeft] = useState("");
 
-  return (
-    <div className="col-xl-3 col-lg-4 col-md-6 mb-4">
-      <div className="card shadow-sm">
-        <div className="card-header">{candidate.name}</div>
-        <div className="card-body">
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis domain={[0, "dataMax + 10"]} />
-
-              <Tooltip />
-              <Bar dataKey="value" barSize={50} minPointSize={10}>
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={getBarColor(entry.name, entry.value)}
+    console.log(candidate)
+  
+    useEffect(() => {
+      const calculateTimeLeft = () => {
+        const testStartedOn = new Date(candidate.test_StartedOn);
+        const testEndsOn = new Date(testStartedOn.getTime() + 60 * 60 * 1000); // 1 hour later
+        const now = new Date();
+        const timeLeftMs = testEndsOn - now;
+  
+        if (timeLeftMs <= 0) {
+          setTimeLeft("Test time is over");
+        } else {
+          const minutes = Math.floor(timeLeftMs / 60000);
+          const seconds = ((timeLeftMs % 60000) / 1000).toFixed(0);
+          setTimeLeft(`${minutes}m ${seconds}s left`);
+        }
+      };
+  
+      // Initial calculation
+      calculateTimeLeft();
+  
+      // Update every second
+      const timer = setInterval(calculateTimeLeft, 1000);
+  
+      // Cleanup timer on unmount
+      return () => clearInterval(timer);
+    }, [candidate.test_StartedOn]);
+  
+    const chartData = [
+      { name: "Quantitative", value: candidate.aptitude_score + candidate.reasoning_score || 0 },
+      { name: "Technical", value: Number.isNaN(candidate.tech_hard_score + candidate.tech_moderate_score) ? 0 :  candidate.tech_hard_score + candidate.tech_moderate_score },
+    ];
+  
+    const totalCapacity = 50;
+    const appliedCount = candidate.aptitude_score + candidate.reasoning_score + candidate.tech_hard_score;
+    const progressWidth = (appliedCount / totalCapacity) * 100;
+  
+    // Calculate the time left as a percentage of 60 minutes (1 hour)
+    const testDuration = 60 * 60 * 1000; // 1 hour in milliseconds
+    const timeRemainingMs = new Date(candidate.test_StartedOn).getTime() + testDuration - new Date().getTime();
+    const timeLeftPercentage = timeRemainingMs > 0 ? (timeRemainingMs / testDuration) * 100 : 0;
+  
+    // Determine progress bar color based on time left (e.g., red for time running out, green for more time)
+    const progressBarColor = timeLeftPercentage > 30 ? "#4CAF50" : "#F44336"; // Green if more than 30%, Red if less
+  
+    return (
+      <div className="col-xl-3 col-lg-4 col-md-6 mb-4">
+        <div className="card p-3 mb-2">
+          <div className="d-flex justify-content-between">
+            <div className="d-flex flex-row align-items-center">
+              <div className="ms-2 c-details">
+                <h6 className="mb-2">{candidate.candidate_details[0].name.toUpperCase()}</h6>
+                <span className="fw-bold">{candidate.candidate_role}</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4">
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis domain={[0, 50]} />
+                <Tooltip />
+                <Bar dataKey="value" barSize={50}>
+                  {chartData.map((entry, i) => (
+                    <Cell
+                      key={`cell-${i}`}
+                      fill={getBarColor(entry.name, entry.value)}
+                    />
+                  ))}
+                  <LabelList
+                    dataKey="value"
+                    position="insideTop"
+                    content={renderCustomizedLabel}
                   />
-                ))}
-                <LabelList
-                  dataKey="value"
-                  position="insideTop"
-                  content={(props) =>
-                    renderCustomizedLabel({ ...props, name: props.name })
-                  }
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-3">
+              {/* Progress bar container */}
+             
+  
+              {/* Display the remaining time */}
+              <div className="mt-2">
+                <strong>{timeLeft}</strong> {/* Display time left */}
+              </div>
+  
+              <div className="mt-2">
+                Test Status: <span className="text1">{candidate.status}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
-// Main component that renders all cards
+    );
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+// Main component to fetch and render candidate status
 const CandidateStatus = () => {
+  const [candidates, setCandidates] = useState([]);
+
+  const [refresh, setRefresh] = useState(false)
+
+  const refreshList = () => {
+    setRefresh(!refresh)
+  }
+
+  useEffect(() => {
+    const getCandidateStatusDetails = async () => {
+      try {
+        const response = await axios.get(
+          "http://10.10.24.16:8000/api/v1/get_interview_candidate_status"
+        );
+        if (response.data.error_code === 0) {
+            console.log(response.data)
+          setCandidates(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching candidate data:", error);
+      }
+    };
+
+    getCandidateStatusDetails();
+  }, [refresh]);
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-secondary">
@@ -110,12 +186,11 @@ const CandidateStatus = () => {
           <a className="navbar-brand text-white" href="#">
             ADRA
           </a>
-
           <div className="d-flex">
             <button
               className="btn btn-sm btn-danger"
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={refreshList}
             >
               Refresh
             </button>
@@ -123,43 +198,10 @@ const CandidateStatus = () => {
         </div>
       </nav>
 
-      <div className="container-fluid mt-2">
-        <div className="card">
-          <div className="card-body">
-            <div class="d-flex">
-              <h5 className="flex-grow-1">Candidate Aptitute Results</h5>
-
-              <h6>
-                Technical <span class="badge text-bg-primary me-2">40</span>                
-              </h6>
-              
-              <h6>
-                Quantitative <span class="badge text-bg-primary me-2">20</span>
-              </h6>
-              <h6>
-                Total <span class="badge text-bg-danger">60</span>
-              </h6>
-            </div>
-            <hr/>
-            <div class="d-flex">
-              <h5 className="flex-grow-1">Cut-off</h5>
-
-              <h6>
-                Technical <span class="badge text-bg-secondary me-2">20</span>                
-              </h6>
-              
-              <h6>
-                Quantitative <span class="badge text-bg-secondary me-2">10</span>
-              </h6>
-              <h6>
-                Total <span class="badge text-bg-success">30</span>
-              </h6>
-            </div>
-          </div>
-        </div>
-        <div className="row mt-2">
-          {cardData.map((candidate) => (
-            <CandidateCard key={candidate.id} candidate={candidate} />
+      <div className="container-fluid mt-3">
+        <div className="row">
+          {candidates.map((candidate) => (
+            <CandidateCard key={candidate._id} candidate={candidate} />
           ))}
         </div>
       </div>

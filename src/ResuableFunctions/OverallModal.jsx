@@ -1,28 +1,30 @@
 import ButtonComponent from "Components/Button/Button";
-import { useCustomNavigate, useDispatch } from "ResuableFunctions/CustomHooks";
+import useCommonState, { useCustomNavigate, useDispatch } from "ResuableFunctions/CustomHooks";
 import ModalComponent from "Components/Modal/Modal";
 import SpinnerComponent from "Components/Spinner/Spinner";
-import { useSelector } from "react-redux";
 import JsonData from "Utils/JsonData";
 import Icons from "Utils/Icons";
 import { resetModalBox, updateModalShow } from "Views/Common/Slice/Common_slice";
 import { handleCloseTestAndNavigate, handleCloseTestEndpoint } from "Views/InterviewCandidates/Action/interviewAction";
 import Img from "Components/Img/Img";
 import Image from "Utils/Image";
+import { Inputfunctions } from "./Inputfunctions";
+import { handleCreateCampaign } from "Views/Admin/Action/AdminAction";
 
 export function OverallModel() {
-    const { commonState, interviewState } = useSelector((state) => state);
+    const { commonState, interviewState, adminState } = useCommonState();
+
+
     const dispatch = useDispatch();
     const JsonJsx = JsonData()?.jsxJson;
     const navigate = useCustomNavigate();
 
     function modalHeaderFun() {
         switch (commonState?.modal_from) {
-            case "interview_candidate":
+            case "admin":
                 switch (commonState?.modal_type) {
-                    case "test_completed":
-                        // return <h6 className='mb-0'>Test completed</h6>;
-                        return
+                    case "create_campaign":
+                        return <h6 className='mb-0'>Create campaign</h6>;
 
                     default:
                         break;
@@ -32,89 +34,6 @@ export function OverallModel() {
             default:
                 break;
         }
-    }
-
-    function dynamicInput() {
-        let funBy = null
-
-        // if (servicesState?.modal_from === "Load") {
-        //     if (["Edit", "Create"].includes(servicesState?.modal_type)) {
-        //         funBy = JsonJsx?.loadAddEditInputs
-        //     } else {
-        //         let restrictDate = JsonJsx?.loadFilterInputs?.filter((v) => v?.name !== "From Date" && v?.name !== "To Date")
-
-        //         if (window.location.pathname === "/dashboard/analytics" || window.location.pathname === "/dashboard/analytics/") {
-        //             funBy = JsonJsx?.loadFilterInputs
-        //         } else {
-        //             funBy = restrictDate
-        //         }
-        //     }
-        // }
-
-        // if (servicesState?.modal_from === "Truck") {
-        //     if (["Edit", "Create"].includes(servicesState?.modal_type)) {
-        //         funBy = JsonJsx?.truckAddEditInputs
-        //     } else {
-        //         let restrictDate = JsonJsx?.truckFilterInputs?.filter((v) => v.name !== "From Date" && v.name !== "To Date")
-        //         if (window.location.pathname === "/dashboard/analytics" || window.location.pathname === "/dashboard/analytics/") {
-        //             funBy = JsonJsx?.truckFilterInputs
-        //         } else {
-        //             funBy = restrictDate
-        //         }
-        //     }
-        // }
-
-        // if (servicesState?.modal_from === "Driver") {
-        //     if (["Edit", "Create"].includes(servicesState?.modal_type)) {
-        //         funBy = JsonJsx?.driverAddEditInputs
-        //     } else {
-        //         let restrictDate = JsonJsx?.driverFilterInputs?.filter((v) => v.name !== "From Date" && v.name !== "To Date")
-        //         if (window.location.pathname === "/dashboard/analytics" || window.location.pathname === "/dashboard/analytics/") {
-        //             funBy = JsonJsx?.driverFilterInputs
-        //         } else {
-        //             funBy = restrictDate
-        //         }
-        //     }
-        // }
-
-        // if (servicesState?.modal_from === "BuyAndSell") {
-        //     if (["Edit", "Create"].includes(servicesState?.modal_type)) {
-        //         funBy = JsonJsx?.buyAndSellAddEdit
-        //     } else {
-        //         let restrictDate = JsonJsx?.buyAndSellFilterInputs?.filter((v) => v.name !== "From Date" && v.name !== "To Date" && v.name !== "State list")
-        //         if (window.location.pathname === "/dashboard/analytics" || window.location.pathname === "/dashboard/analytics/") {
-        //             funBy = JsonJsx?.buyAndSellFilterInputs
-        //         } else {
-        //             funBy = restrictDate
-        //         }
-        //     }
-        // }
-
-        // if (servicesState?.modal_from === "Blog") {
-        //     funBy = JsonJsx?.blogInputs
-        // }
-
-        // if (servicesState?.modal_from === "Feedback") {
-        //     if (["", "not solved"].includes(servicesState?.modal_type)) {
-        //         const removeSolvedDate = JsonJsx?.feebbackUpdateOrWatchStatus?.filter((v) => v?.name !== "solved_date")
-        //         funBy = removeSolvedDate
-        //     } else {
-        //         funBy = JsonJsx?.feebbackUpdateOrWatchStatus
-        //     }
-        // }
-
-        // if (servicesState?.modal_from === "Overall") {
-        //     funBy = JsonJsx?.analyticsOverallLineChartFilter
-        // }
-
-        // if (servicesState?.modal_from === "CRM") {
-        //     if (servicesState?.modal_type === "Edit") {
-        //         funBy = JsonJsx?.crmStatusModal
-        //     } else {
-        //         funBy = JsonJsx?.crmStatusBeforeSaleEntryModal
-        //     }
-        // }
-
     }
 
     function modalBodyFun() {
@@ -192,6 +111,24 @@ export function OverallModel() {
                     default:
                         break;
                 }
+
+            case "admin":
+                switch (commonState?.modal_type) {
+                    case "create_campaign":
+                        return <div className="col-10 mx-auto py-4">
+                            {Inputfunctions(JsonJsx?.create_campaign_inputs)}
+                            <ButtonComponent
+                                type="button"
+                                className="btn btn-dark text-center w-100 mt-3"
+                                buttonName="Create"
+                                clickFunction={() => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date }))}
+                            />
+
+                        </div>
+
+                    default:
+                        break;
+                }
         }
     }
 
@@ -235,7 +172,7 @@ export function OverallModel() {
     return (
         <ModalComponent
             show={commonState?.modalShow}
-            modalSize={commonState?.moalSize}
+            modalSize={commonState?.modalSize}
             modalCentered={true}
             modalCloseButton={commonState?.modal_close_btn}
             showModalHeader={true}
@@ -246,7 +183,7 @@ export function OverallModel() {
             showModalFooter={true}
             modalFooterClassname="border-0"
             modalFooter={modalFooterFun()}
-            modalClassname={["lg", "xl"].includes(commonState?.moalSize) ? "model_height_lg" : ''}
+            modalClassname={["lg", "xl"].includes(commonState?.modalSize) ? "model_height_lg" : ''}
         />
     )
 }

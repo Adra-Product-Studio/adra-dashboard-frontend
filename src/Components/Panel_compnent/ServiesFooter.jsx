@@ -1,13 +1,12 @@
 import React from 'react'
-import { useDispatch } from 'ResuableFunctions/CustomHooks'
+import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks'
 import SelectBox from 'Components/Input/SelectBox'
 import Pagination from 'Components/Pagination/Pagination'
 import { Card } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
 import { updateEntriesCount } from 'Views/Common/Slice/Common_slice'
 
 const ServiesFooter = () => {
-    const { commonState } = useSelector((state) => state);
+    const { commonState } = useCommonState();
     const dispatch = useDispatch()
 
 

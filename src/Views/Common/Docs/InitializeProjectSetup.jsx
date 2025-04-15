@@ -1,14 +1,13 @@
 import React, { Fragment, useEffect } from 'react'
-import { useDispatch, useSelector } from "react-redux";
 import { handleClearErrors } from 'Views/Common/Action/Common_action';
 import { toast } from 'react-toastify';
-import { CustomUseLocationHook, useSize } from 'ResuableFunctions/CustomHooks';
+import useCommonState, { CustomUseLocationHook, useDispatch, useSize } from 'ResuableFunctions/CustomHooks';
 import { Outlet } from 'react-router-dom';
 import { updateCurrentNavMenuIndex, updateIsonline, updateScreenCurrentDimension } from 'Views/Common/Slice/Common_slice';
 import { OverallModel } from 'ResuableFunctions/OverallModal';
 
 export const InitializeProjectSetup = () => {
-    const { commonState } = useSelector((state) => state);
+    const { commonState } = useCommonState();
     const sizer = useSize();
     const dispatch = useDispatch();
     const location = CustomUseLocationHook();

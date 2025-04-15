@@ -56,7 +56,7 @@ export const handleRegisterCandidate = params => async (dispatch) => {
 }
 
 const registerCandidateCall = params => async (dispatch) => {
-    console.log(params)
+
     try {
         dispatch(registerCandidateRequest())
         const { data } = await axiosInstance.post("/register_candidate", params)

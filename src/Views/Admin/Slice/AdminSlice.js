@@ -3,25 +3,54 @@ import { createSlice } from "@reduxjs/toolkit";
 const AdminSlice = createSlice({
     name: "Admin_slice",
     initialState: {
-        placeholderGlow: false
+        placeholderGlow: false,
+        spinnerGlow: false
     },
     reducers: {
-        getCampaignRequest(state, action) {
+        //                                create campaign onChange                                  //
+        update_create_campaign_data(state, action) {
             return {
                 ...state,
-                placeholderGlow: true
+                create_campaign: {
+                    ...state.create_campaign,
+                    ...action.payload
+                }
             }
         },
-        getCampaignResponse(state, action) {
-            return {
-                ...state,
-                placeholderGlow: false
+
+        //                                Get all campaign data                                  //
+        getCampaign(state, action) {
+            const { type, data } = action.payload
+            let obj = { ...state };
+
+            switch (type) {
+                case "request":
+                    obj.campaigns_data = {}
+                    obj.campaign_placeholder = true
+                    break;
+
+                case "response":
+                    obj.campaigns_data = data || {}
+                    obj.campaign_placeholder = false
+                    break;
+
+                case "failure":
+                    obj.campaigns_data = {}
+                    obj.campaign_placeholder = false
+                    break;
+
+                default:
+                    break;
             }
+
+            return obj
         },
-        getCampaignFailure(state, action) {
+
+        // handle open create campaign modal
+        updateCreateCampaign(state, action) {
             return {
                 ...state,
-                placeholderGlow: false
+                spinnerGlow: false
             }
         }
     }
@@ -30,9 +59,8 @@ const AdminSlice = createSlice({
 const { actions, reducer } = AdminSlice;
 
 export const {
-    getCampaignRequest,
-    getCampaignResponse,
-    getCampaignFailure
+    update_create_campaign_data, getCampaign, updateCreateCampaign,
+
 } = actions;
 
 export default reducer;

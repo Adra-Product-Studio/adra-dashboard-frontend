@@ -6,12 +6,12 @@
 .main {
   height: calc(var(--root-height) - var(--header-height));
   padding-top: 1rem;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .registration-form-height {
   height: var(--registration-form-height);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .registration-form-height::-webkit-scrollbar {
@@ -238,11 +238,11 @@
   overflow-y: scroll !important;
 }
 
-.interview_candidate_height{
+.interview_candidate_height {
   height: 45rem !important;
 }
 
-.submit_confirmation_height{
+.submit_confirmation_height {
   height: 20rem !important;
 }
 
@@ -414,6 +414,17 @@
   color: white;
 }
 
-.question-progress-bar .progress-bar{
+.question-progress-bar .progress-bar {
   background-color: #6beb1c !important;
+}
+
+.campaign_header {
+  display: flex;
+  padding: 1rem 0rem;
+}
+
+.campaign_body {
+  height: calc(100vh - 11.5rem) !important;
+  width: 100%;
+  overflow-y: auto;
 }

@@ -2,15 +2,14 @@ import InterviewCandidatesHeader from 'Components/Panel_compnent/InterviewCandid
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import ButtonComponent from "Components/Button/Button";
-import { useDispatch } from 'ResuableFunctions/CustomHooks';
+import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import JsonData from 'Utils/JsonData';
 import { Inputfunctions } from 'ResuableFunctions/Inputfunctions';
-import { useSelector } from 'react-redux';
 import { handleRegisterCandidate } from '../Action/interviewAction';
 import SpinnerComponent from 'Components/Spinner/Spinner';
 
 const InterviewCandidatesRegistration = () => {
-    const { interviewState } = useSelector((state) => state)
+    const { interviewState } = useCommonState();
     const { candidateRegistration } = JsonData()?.jsxJson;
     const dispatch = useDispatch()
 
