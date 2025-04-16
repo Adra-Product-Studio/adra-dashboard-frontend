@@ -1,215 +1,145 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { updateCreateCampaign } from "Views/Admin/Slice/AdminSlice";
-import { registerCandidateFailure, registerCandidateResponse, submitTestByManual, submitTestFailure, submitTestResponse, updateCandidateData, updateTimeOverCloseTest } from "Views/InterviewCandidates/Slice/interviewSlice";
+import { postOrEditCampign } from "Views/Admin/Slice/AdminSlice";
+import {
+    registerCandidateFailure,
+    registerCandidateResponse,
+    submitTestByManual,
+    submitTestFailure,
+    submitTestResponse,
+    updateCandidateData,
+    updateTimeOverCloseTest
+} from "Views/InterviewCandidates/Slice/interviewSlice";
+
+const initialState = {
+    modalShow: false,
+    modalSize: "md",
+    modal_from: null,
+    modal_type: null,
+    modal_close_btn: true,
+
+    canvasShow: false,
+    isOnline: true,
+    currentNavMenuIndex: 0,
+    currentMenuName: '',
+    innerWidth: 0,
+    innerHeight: 0,
+    buttonSpinner: false,
+
+    usernamee: '',
+    passwordd: '',
+    eyeOpen: false,
+    validated: false,
+
+    token: Cookies.get("token") ? decryptData(Cookies.get("token")) : '',
+    user_id: Cookies.get('user_id') || '',
+    user_role: Cookies.get("user_role") || '',
+
+    showing_entries: [10, 20, 50],
+    pageSize: 10,
+    entries_selected: false,
+
+    currentPage: 1,
+    totalCount: 0,
+    siblingCount: 1,
+
+    search_value: '',
+    search_clicked: false,
+
+    apply_filter_clicked: false,
+    apply_filter: false
+};
 
 const commonSlice = createSlice({
     name: 'commonSlice',
-    initialState: {
-        modalShow: false,
-        modalSize: "md",
-        modal_from: null,
-        modal_type: null,
-        modal_close_btn: true,
-
-        canvasShow: false,
-        isOnline: true,
-        currentNavMenuIndex: 0,
-        currentMenuName: '',
-        innerWidth: 0,
-        innerHeight: 0,
-        buttonSpinner: false,
-
-        //login states
-        usernamee: '',
-        passwordd: '',
-        eyeOpen: false,
-        validated: false,
-
-        //token
-        token: Cookies.get("token") ? decryptData(Cookies.get("token")) : '',
-        user_id: Cookies.get('user_id') || '',
-        user_role: Cookies.get("user_role") || '',
-
-        //no of entries
-        showing_entries: [10, 20, 50],
-        pageSize: 10,
-        entries_selected: false,
-
-        //custom pagination 
-        currentPage: 1,
-        totalCount: 0,
-        siblingCount: 1,
-
-        //search 
-        search_value: '',
-        search_clicked: false,
-
-        //apply filter
-        apply_filter_clicked: false,
-        apply_filter: false
-    },
+    initialState,
     reducers: {
-        updateModalShow(state, actions) {
-            return {
-                ...state,
-                modalShow: !state.modalShow
-            }
+        updateModalShow(state) {
+            state.modalShow = !state.modalShow;
         },
-        updateCanvasShow(state, actions) {
-            return {
-                ...state,
-                canvasShow: !state.canvasShow
-            }
+        updateCanvasShow(state) {
+            state.canvasShow = !state.canvasShow;
         },
         updateIsonline(state, action) {
-            return {
-                ...state,
-                isOnline: action.payload
-            }
+            state.isOnline = action.payload;
         },
         updateCurrentNavMenuIndex(state, action) {
-            return {
-                ...state,
-                currentMenuName: action.payload,
-            }
+            state.currentMenuName = action.payload;
         },
         updateScreenCurrentDimension(state, action) {
-            return {
-                ...state,
-                innerWidth: action.payload?.innerWidth,
-                innerHeight: action.payload?.innerHeight
-            }
+            state.innerWidth = action.payload?.innerWidth;
+            state.innerHeight = action.payload?.innerHeight;
         },
-        resetModalBox(state, action) {
-            return {
-                ...state,
+        resetModalBox(state) {
+            Object.assign(state, {
                 modalShow: false,
                 modalSize: "md",
                 modal_from: null,
                 modal_type: null,
                 modal_close_btn: true,
-            }
+            });
         },
-
-        //Toast
         updateToast(state, action) {
-            return {
-                ...state,
-                Err: action.payload.message,
-                Toast_Type: action.payload.type,
-                buttonSpinner: false
-            }
+            state.Err = action.payload.message;
+            state.Toast_Type = action.payload.type;
+            state.buttonSpinner = false;
         },
-        clearError(state, actions) {
-            return {
-                ...state,
-                Err: null,
-                Toast_Type: null
-            }
+        clearError(state) {
+            state.Err = null;
+            state.Toast_Type = null;
         },
-
-        //Form validation
-        updateValidation(state, actions) {
-            return {
-                ...state,
-                validated: true
-            }
+        updateValidation(state) {
+            state.validated = true;
         },
-        resetValidation(state, action) {
-            return {
-                ...state,
-                validated: false
-            }
+        resetValidation(state) {
+            state.validated = false;
         },
-
-        //Login states
         updateLoginCredentials(state, action) {
-            const type = Object.keys(action.payload)[0];
-            switch (type) {
-                case "username":
-                    return {
-                        ...state,
-                        usernamee: action.payload?.username
-                    }
-                case "password":
-                    return {
-                        ...state,
-                        passwordd: action.payload?.password
-                    }
-                default:
-                    return
-            }
+            const { username, password } = action.payload;
+            if (username !== undefined) state.usernamee = username;
+            if (password !== undefined) state.passwordd = password;
         },
-        updateEyeFunction(state, actions) {
-            return {
-                ...state,
-                eyeOpen: !state.eyeOpen
-            }
+        updateEyeFunction(state) {
+            state.eyeOpen = !state.eyeOpen;
         },
-
-        //Api 
-        loginRequest(state, actions) {
-            return {
-                ...state,
-                buttonSpinner: true,
-                token: null
-            }
+        loginRequest(state) {
+            state.buttonSpinner = true;
+            state.token = null;
         },
         loginResponse(state, action) {
-            if (action.payload?.token) {
-                const encryptedToken = encryptData(action.payload?.token)
-                Cookies.set("token", encryptedToken)
+            const { token, user_role } = action.payload;
+            if (token) {
+                Cookies.set("token", encryptData(token));
+                state.token = token;
             }
-
-            if (action.payload?.user_role) {
-                Cookies.set("user_role", action.payload?.user_role)
+            if (user_role) {
+                Cookies.set("user_role", user_role);
+                state.user_role = user_role;
             }
-
-            return {
-                ...state,
-                buttonSpinner: false,
-                eyeOpen: !state.eyeOpen,
-                token: action.payload?.token,
-                user_role: action.payload?.user_role
-            }
+            state.buttonSpinner = false;
+            state.eyeOpen = !state.eyeOpen;
         },
-
-        //Bearer token 
         updateToken(state, action) {
-            if (action.payload) {
-                Cookies.set("token", action.payload)
-            }
-            return {
-                ...state,
-                token: action.payload ? action.payload : ''
-            }
+            const token = action.payload;
+            if (token) Cookies.set("token", token);
+            state.token = token || '';
         },
-        updateRemoveToken(state, actions) {
-            Cookies.remove("token")
-            return {
-                ...state,
-                token: ''
-            }
+        updateRemoveToken(state) {
+            Cookies.remove("token");
+            state.token = '';
         },
-
-        //Logout
-        logout(state, actions) {
+        logout(state) {
             Cookies.remove("token");
             Cookies.remove("user_id");
-            return {
-                ...state,
+            Object.assign(state, {
                 token: '',
                 usernamee: '',
                 passwordd: '',
-            }
+            });
         },
-
-        //reset all menus
-        updateResetAllMenus(state, action) {
-            return {
-                ...state,
+        updateResetAllMenus(state) {
+            Object.assign(state, {
                 edited: false,
                 validated: false,
                 modalShow: false,
@@ -220,93 +150,58 @@ const commonSlice = createSlice({
                 search_clicked: false,
                 apply_filter: false,
                 apply_filter_clicked: false
-            }
+            });
         },
-
-        //pagination
         updatePaginationSize(state, action) {
-            return {
-                ...state,
-                pageSize: action.payload
-            }
+            state.pageSize = action.payload;
         },
         updateCurrentPage(state, action) {
-            return {
-                ...state,
-                currentPage: action.payload
-            }
+            state.currentPage = action.payload;
         },
-
-        //search
         updateSearchValue(state, action) {
-            return {
-                ...state,
-                search_value: action.payload,
-                search_clicked: false
-            }
+            state.search_value = action.payload;
+            state.search_clicked = false;
         },
-        clearSearch(state, action) {
-            return {
-                ...state,
-                search_value: '',
-                search_clicked: false
-            }
+        clearSearch(state) {
+            state.search_value = '';
+            state.search_clicked = false;
         },
-        updateSearchClickedTrue(state, action) {
-            return {
-                ...state,
+        updateSearchClickedTrue(state) {
+            Object.assign(state, {
                 search_clicked: true,
                 apply_filter: false,
                 apply_filter_clicked: false,
                 totalCount: 0,
                 pageSize: 10,
                 currentPage: 1
-            }
+            });
         },
-        updateSearchClickedFalse(state, action) {
-            return {
-                ...state,
-                search_clicked: true
-            }
+        updateSearchClickedFalse(state) {
+            state.search_clicked = true;
         },
-
-        //number of entries select
         updateEntriesCount(state, action) {
-            return {
-                ...state,
-                currentPage: 1,
-                pageSize: action.payload,
-                entries_selected: true,
-            }
+            state.pageSize = action.payload;
+            state.entries_selected = true;
+            state.currentPage = 1;
         },
-
-        //apply filter button click state
-        updateApplyFilterClickedTrue(state, action) {
-            return {
-                ...state,
+        updateApplyFilterClickedTrue(state) {
+            Object.assign(state, {
                 apply_filter_clicked: true,
                 apply_filter: true,
                 search_clicked: false,
                 totalCount: 0,
                 pageSize: 10,
                 currentPage: 1
-            }
+            });
         },
-        updateApplyFilterClickedFalse(state, action) {
-            return {
-                ...state,
-                apply_filter_clicked: false,
-                apply_filter: false
-            }
+        updateApplyFilterClickedFalse(state) {
+            state.apply_filter_clicked = false;
+            state.apply_filter = false;
         },
-
-        //close test mode 
-        closeTestMode(state, action) {
-            Cookies.remove("token")
-            Cookies.remove("user_role")
-
-            return {
-                ...state,
+        closeTestMode(state) {
+            Cookies.remove("token");
+            Cookies.remove("user_role");
+            Object.assign(state, {
                 modalShow: false,
                 modalSize: "md",
                 modal_from: null,
@@ -314,108 +209,114 @@ const commonSlice = createSlice({
                 modal_close_btn: true,
                 token: null,
                 user_role: null
-            }
+            });
         },
-
         updateOverallModalData(state, action) {
-            return {
-                ...state,
+            const { size, from, type } = action.payload;
+            Object.assign(state, {
                 modalShow: true,
-                modalSize: action.payload.size,
-                modal_from: action.payload.from,
-                modal_type: action.payload.type
-            }
+                modalSize: size,
+                modal_from: from,
+                modal_type: type
+            });
         }
     },
     extraReducers: (builder) => {
         builder
-            //candidate register onChange validated false
-            .addCase(updateCandidateData, (state, action) => {
-                state.validated = false
+            .addCase(updateCandidateData, (state) => {
+                state.validated = false;
             })
             .addCase(registerCandidateResponse, (state, action) => {
-                state.usernamee = action.payload?.username
-                state.passwordd = action.payload?.password
-                state.modalSize = "md"
-                state.modal_from = "interview_candidate"
-                state.modal_type = "registration_completed"
-                state.modalShow = true
-                state.modal_close_btn = false
+                state.usernamee = action.payload?.username;
+                state.passwordd = action.payload?.password;
+                Object.assign(state, {
+                    modalSize: "md",
+                    modal_from: "interview_candidate",
+                    modal_type: "registration_completed",
+                    modalShow: true,
+                    modal_close_btn: false
+                });
             })
-            .addCase(registerCandidateFailure, (state, action) => {
-                state.Err = action.payload
-                state.Toast_Type = "error"
+            .addCase(submitTestByManual, (state) => {
+                Object.assign(state, {
+                    modalSize: "md",
+                    modal_from: "interview_candidate",
+                    modal_type: "submit_confirmation",
+                    modalShow: true,
+                    modal_close_btn: false
+                });
             })
-
-            .addCase(submitTestByManual, (state, action) => {
-                state.modalSize = "md"
-                state.modal_from = "interview_candidate"
-                state.modal_type = "submit_confirmation"
-                state.modalShow = true
-                state.modal_close_btn = false
+            .addCase(submitTestResponse, (state) => {
+                Object.assign(state, {
+                    modalSize: "xl",
+                    modal_from: "interview_candidate",
+                    modal_type: "test_completed",
+                    modalShow: true,
+                    modal_close_btn: false
+                });
             })
-
-            .addCase(submitTestResponse, (state, action) => {
-                state.modalSize = "xl"
-                state.modal_from = "interview_candidate"
-                state.modal_type = "test_completed"
-                state.modalShow = true
-                state.modal_close_btn = false
-            })
-            .addCase(submitTestFailure, (state, action) => {
-                state.Err = action.payload
-                state.Toast_Type = "error"
-            })
-
             .addCase(updateTimeOverCloseTest, (state, action) => {
-                state.usernamee = action.payload?.username
-                state.passwordd = action.payload?.password
-                state.modalSize = "xl"
-                state.modal_from = "interview_candidate"
-                state.modal_type = "time_finished"
-                state.modalShow = true
-                state.modal_close_btn = false
+                state.usernamee = action.payload?.username;
+                state.passwordd = action.payload?.password;
+                Object.assign(state, {
+                    modalSize: "xl",
+                    modal_from: "interview_candidate",
+                    modal_type: "time_finished",
+                    modalShow: true,
+                    modal_close_btn: false
+                });
             })
 
-    }
-})
 
-const { actions, reducer } = commonSlice;
+            // matcher
+            .addMatcher(
+                function (action) {
+                    return [
+                        registerCandidateFailure.toString(),
+                        submitTestFailure.toString(),
+                    ].includes(action.type)
+                },
+                setErrorState
+            )
+
+            .addMatcher(
+                function (action) {
+                    return [
+                        postOrEditCampign.toString(),
+                    ].includes(action.type)
+                },
+                (state, action) => {
+                    if (action?.payload?.type === "response") {
+                        resetModal(state)
+                    }
+                }
+            )
+    }
+});
+
+function setErrorState(state, action) {
+    let error_message = typeof action.payload === 'object' ? action.payload?.message : action.payload;
+    state.Err = error_message;
+    state.Toast_Type = "error";
+}
+
+function resetModal(state, action) {
+    state.modalShow = false
+    state.modalSize = "md"
+    state.modal_from = null
+    state.modal_type = null
+    state.modal_close_btn = true
+}
 
 export const {
-    updateModalShow,
-    updateCanvasShow,
-    updateIsonline,
-    updateCurrentNavMenuIndex,
-    updateScreenCurrentDimension,
-    updateLoginCredentials,
-    updateEyeFunction,
-    clearError,
-    updateResetAllMenus,
-    resetModalBox,
+    updateModalShow, updateCanvasShow, updateIsonline, updateCurrentNavMenuIndex,
+    updateScreenCurrentDimension, resetModalBox, updateToast, clearError,
+    updateValidation, resetValidation, updateLoginCredentials, updateEyeFunction,
+    loginRequest, loginResponse, updateToken, updateRemoveToken, logout,
+    updateResetAllMenus, updatePaginationSize, updateCurrentPage,
+    updateSearchValue, clearSearch, updateSearchClickedTrue,
+    updateSearchClickedFalse, updateEntriesCount, updateApplyFilterClickedTrue,
+    updateApplyFilterClickedFalse, closeTestMode, updateOverallModalData
+} = commonSlice.actions;
 
-    resetValidation,
-    updateValidation,
-
-    loginRequest,
-    loginResponse,
-    updateToast,
-    updateToken,
-    updateRemoveToken,
-    logout,
-
-    updatePaginationSize,
-    updateCurrentPage,
-    updateSearchValue,
-    clearSearch,
-    updateSearchClickedTrue,
-    updateSearchClickedFalse,
-    updateApplyFilterClickedTrue,
-    updateApplyFilterClickedFalse,
-
-    updateEntriesCount,
-    closeTestMode,
-    updateOverallModalData
-} = actions;
-
-export default reducer
+export default commonSlice.reducer;

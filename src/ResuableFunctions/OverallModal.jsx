@@ -111,11 +111,12 @@ export function OverallModel() {
                     default:
                         break;
                 }
+                break;
 
             case "admin":
                 switch (commonState?.modal_type) {
                     case "create_campaign":
-                        return <div className="col-10 mx-auto py-4">
+                        return <div className="col-11 mx-auto py-2">
                             {Inputfunctions(JsonJsx?.create_campaign_inputs)}
                             <ButtonComponent
                                 type="button"
@@ -163,6 +164,7 @@ export function OverallModel() {
                     default:
                         break;
                 }
+                break;
 
             default:
                 break;
@@ -183,7 +185,7 @@ export function OverallModel() {
             showModalFooter={true}
             modalFooterClassname="border-0"
             modalFooter={modalFooterFun()}
-            modalClassname={["lg", "xl"].includes(commonState?.modalSize) ? "model_height_lg" : ''}
+            modalClassname={/lg|xl/.test(commonState?.modalSize) ? "model_height_lg rounded-4" : 'rounded-4'}
         />
     )
 }

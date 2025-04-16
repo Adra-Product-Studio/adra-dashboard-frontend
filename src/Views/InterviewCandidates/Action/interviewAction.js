@@ -15,7 +15,8 @@ import {
     submitTestResponse,
     submitTestFailure,
     submitTestRequestSpinner,
-    updateTimeOverCloseTest
+    updateTimeOverCloseTest,
+    getRegistrationRoles
 
 } from "Views/InterviewCandidates/Slice/interviewSlice";
 import { IndexedDbDeleteFun } from "Views/InterviewCandidates/IndexedDbDeleteFun";
@@ -27,6 +28,20 @@ export const handleInterviewRegistrationOnChange = ipVal => dispatch => {
 }
 
 //                                                                  candidate registration endpoint
+export const handleGetRegistrationRoles = () => async (dispatch) => {
+    try {
+        dispatch(getRegistrationRoles({ type: 'request' }))
+        const { data } = await axiosInstance.post("/get_registration_roles", { check_campaign: new Date() })
+        if (data?.error_code === 0) {
+            dispatch(getRegistrationRoles({ type: 'response', data: data?.data }))
+        } else {
+            dispatch(getRegistrationRoles({ type: 'failure', data: data?.message }))
+        }
+    } catch (Err) {
+        dispatch(getRegistrationRoles({ type: 'failure', message: Err?.message }))
+    }
+}
+
 export const handleRegisterCandidate = params => async (dispatch) => {
     if (params?.candidateData?.name && params?.candidateData?.age && params?.candidateData?.phoneNumber && params?.candidateData?.email &&
         params?.candidateData?.gender && params?.candidateData?.address && params?.candidateData?.parentName && params?.candidateData?.parentOccupation &&
@@ -87,7 +102,6 @@ export const handleGetQuestions = async (dispatch) => {
         dispatch(getQuestionsFailure(Err?.message))
     }
 }
-
 
 //                                                                   update answers in index db                                                                     
 export const handleUpdateAnswer = (data) => (dispatch) => {

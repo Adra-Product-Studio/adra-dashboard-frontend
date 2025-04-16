@@ -1,66 +1,85 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+    placeholderGlow: false,
+    spinnerGlow: false,
+    create_campaign: {},
+    campaigns_data: {},
+    campaign_placeholder: false,
+    create_update_campaign_spinner: false,
+};
+
 const AdminSlice = createSlice({
     name: "Admin_slice",
-    initialState: {
-        placeholderGlow: false,
-        spinnerGlow: false
-    },
+    initialState,
     reducers: {
-        //                                create campaign onChange                                  //
+        // Update create campaign data (onChange)
         update_create_campaign_data(state, action) {
-            return {
-                ...state,
-                create_campaign: {
-                    ...state.create_campaign,
-                    ...action.payload
-                }
-            }
+            Object.assign(state.create_campaign, action.payload);
         },
 
-        //                                Get all campaign data                                  //
+        // Get all campaign data
         getCampaign(state, action) {
-            const { type, data } = action.payload
-            let obj = { ...state };
+            const { type, data } = action.payload;
 
             switch (type) {
                 case "request":
-                    obj.campaigns_data = {}
-                    obj.campaign_placeholder = true
+                    state.campaigns_data = {};
+                    state.campaign_placeholder = true;
                     break;
 
                 case "response":
-                    obj.campaigns_data = data || {}
-                    obj.campaign_placeholder = false
+                    state.campaigns_data = data || {};
+                    state.campaign_placeholder = false;
                     break;
 
                 case "failure":
-                    obj.campaigns_data = {}
-                    obj.campaign_placeholder = false
+                    state.campaigns_data = {};
+                    state.campaign_placeholder = false;
                     break;
 
                 default:
                     break;
             }
-
-            return obj
         },
 
-        // handle open create campaign modal
-        updateCreateCampaign(state, action) {
-            return {
-                ...state,
-                spinnerGlow: false
+        // Create or update campaign
+        postOrEditCampign(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.create_update_campaign_spinner = true;
+                    break;
+
+                case "response":
+                    state.create_update_campaign_spinner = false;
+                    state.campaigns_data.campaignCount = state.campaigns_data.campaignCount || 0 + 1;
+                    state.campaigns_data.campaign.push(data);
+                    state.create_campaign = {}
+                    break;
+
+                case "failure":
+                    state.create_update_campaign_spinner = false;
+                    break;
+
+                default:
+                    break;
             }
+        },
+
+        // Handle open create campaign modal
+        updateCreateCampaign(state) {
+            state.spinnerGlow = false;
         }
     }
-})
-
-const { actions, reducer } = AdminSlice;
+});
 
 export const {
-    update_create_campaign_data, getCampaign, updateCreateCampaign,
+    update_create_campaign_data,
+    getCampaign,
+    updateCreateCampaign,
+    postOrEditCampign
+} = AdminSlice.actions;
 
-} = actions;
-
-export default reducer;
+export default AdminSlice.reducer;

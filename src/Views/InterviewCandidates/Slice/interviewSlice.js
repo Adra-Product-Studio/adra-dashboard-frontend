@@ -19,21 +19,24 @@ const interviewSlice = createSlice({
     },
     reducers: {
         updateCandidateData(state, action) {
-            let registrationDetails = { ...state.candidateData, ...action.payload }
+            const [key, value] = Object.entries(action.payload)[0];
+            state.candidateData[key] = value;
 
-            if (Object.keys(action.payload)[0] === "maritalStatus") {
-                registrationDetails.childrens = ""
-            }
+            switch (key) {
+                case "maritalStatus":
+                    state.candidateData.childrens = "";
+                    break;
 
-            if (Object.keys(action.payload)[0] === "experience") {
-                registrationDetails.previousCompanyName = ""
-                registrationDetails.designation = ""
-                registrationDetails.canditateExpType = ""
-            }
+                case "experience":
+                    state.candidateData.previousCompanyName = "";
+                    state.candidateData.designation = "";
+                    state.candidateData.canditateExpType = "";
+                    break;
 
-            return {
-                ...state,
-                candidateData: registrationDetails
+                case "canditateRole":
+                    const campaign_data = state?.registration_roles?.find(item => item?.job_title === value);
+                    state.candidateData.campaign_id = campaign_data?._id || "";
+                    break;
             }
         },
         getQuestionFromDb(state, action) {
@@ -182,7 +185,28 @@ const interviewSlice = createSlice({
                 selectedQuestionIndex: 0,
                 generatedQuestions: []
             }
+        },
+        getRegistrationRoles(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case 'request':
+                    state.registration_placeholder = true;
+                    state.registration_roles = [];
+                    break;
+
+                case 'response':
+                    state.registration_placeholder = false;
+                    state.registration_roles = data || [];
+                    break;
+
+                case 'failure':
+                    state.registration_placeholder = false;
+                    state.registration_roles = [];
+                    break;
+            }
         }
+
     },
     extraReducers: (builder) => {
         builder
@@ -215,7 +239,8 @@ export const {
     submitTestRequest,
     submitTestResponse,
     submitTestFailure,
-    submitTestRequestSpinner
+    submitTestRequestSpinner,
+    getRegistrationRoles
 
 } = actions;
 

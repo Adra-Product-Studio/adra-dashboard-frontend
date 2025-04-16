@@ -9,7 +9,7 @@ import Icons from "Utils/Icons";
 import Checkbox from "Components/Input/Checkbox";
 
 export function Inputfunctions(funBy) {
-    console.log(funBy)
+
     return funBy?.map((ipVal, iPInd) => {
         switch (ipVal?.category) {
             case "heading":

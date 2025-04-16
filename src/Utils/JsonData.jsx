@@ -456,7 +456,7 @@ const JsonData = () => {
                 category: "select",
                 placeholder: "",
                 value: interviewState?.candidateData?.canditateRole || '',
-                options: jsonOnly?.canditateRole,
+                options: interviewState?.registration_roles?.map((item) => item?.job_title) || [],
                 divClassName: 'col-12 col-md-8 col-lg-4 col-xl-3 p-1 mt-2',
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ canditateRole: e.target.value })),
                 isMandatory: true,

@@ -1,10 +1,11 @@
 import Modal from 'react-bootstrap/Modal';
-import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
+import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import { updateModalShow } from 'Views/Common/Slice/Common_slice';
 
 const ModalComponent = ({
   componentFrom,
 
+  show,
   modalSize,
   modalClassname,
   modalDialogClassName,
@@ -26,12 +27,11 @@ const ModalComponent = ({
   modalFooter,
 }) => {
   const dispatch = useDispatch();
-  const { commonState } = useCommonState();
 
   return (
 
     <Modal
-      show={commonState?.modalShow}
+      show={show}
       size={modalSize}
       backdrop={modalClickOutsideHide ? "" : "static"}
       fullscreen={modalFullscreen}

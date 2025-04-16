@@ -11,7 +11,8 @@ import InterviewCandidatesAuth from "Views/InterviewCandidates/Docs/InterviewCan
 import CandidateStatus from "CandidateStatus";
 import AdminAuth from "Views/Admin/Docs/AdminAuth";
 import Layout from "Views/Admin/Layout/Layout";
-import Campaign from'Views/Admin/Docs/Campaign';
+import Campaign from 'Views/Admin/Docs/Campaign/Campaign';
+import Campaign_detail from "Views/Admin/Docs/Campaign/Campaign_detail";
 
 
 const App = () => {
@@ -38,7 +39,12 @@ const App = () => {
               <Route path="employees" element={<p>employees</p>} />
               <Route path="attendance" element={<p>attendance</p>} />
               <Route path="payroll" element={<p>payroll</p>} />
-              <Route path="interview" element={<Campaign />} />
+
+              <Route path="interview">
+                <Route index element={<Campaign />} />
+                <Route path=":campaign_id" element={<Campaign_detail />} />
+              </Route>
+
               <Route path="circular" element={<p>circular</p>} />
               <Route path="invoices" element={<p>invoices</p>} />
               <Route path="notes" element={<p>notes</p>} />
