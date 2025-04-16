@@ -9,11 +9,10 @@ import { handleCloseTestAndNavigate, handleCloseTestEndpoint } from "Views/Inter
 import Img from "Components/Img/Img";
 import Image from "Utils/Image";
 import { Inputfunctions } from "./Inputfunctions";
-import { handleCreateCampaign } from "Views/Admin/Action/AdminAction";
+import { handleAddOrUpdateQuestionPattern, handleCreateCampaign } from "Views/Admin/Action/AdminAction";
 
 export function OverallModel() {
     const { commonState, interviewState, adminState } = useCommonState();
-
 
     const dispatch = useDispatch();
     const JsonJsx = JsonData()?.jsxJson;
@@ -124,9 +123,65 @@ export function OverallModel() {
                                 buttonName="Create"
                                 clickFunction={() => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date }))}
                             />
-
                         </div>
 
+                    case "assign_question":
+                        return <div className="col-12 mx-auto py-2 row h-100 align-items-center">
+                            <div className="col-lg-5 row align-items-center border-end pe-4">
+                                {Inputfunctions(JsonJsx?.admin_create_assigning_questions)}
+
+                                <ButtonComponent
+                                    type="button"
+                                    className="btn btn-dark text-center w-100 mt-3"
+                                    buttonName="Add"
+                                    clickFunction={() => dispatch(handleAddOrUpdateQuestionPattern({ ...adminState?.create_assigning_questions, campaign_id: adminState?.campaigns_data?._id }))}
+                                />
+                            </div>
+
+                            <div className="col-lg-7 row align-items-center ps-2">
+                                {
+                                    adminState?.campaigns_data?.question_pattern?.length ?
+                                        <table className="col-12 table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Type</th>
+                                                    <th scope="col">Level</th>
+                                                    <th scope="col">Count</th>
+                                                    <th scope="col">Edit</th>
+                                                    <th scope="col">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {adminState?.campaigns_data?.question_pattern?.map((item, index) => (
+                                                    <tr className="py-2">
+                                                        <td className="col text-secondary">{item?.question_type}</td>
+                                                        <td className="col text-secondary">{item?.difficulty_level}</td>
+                                                        <td className="col text-secondary">{item?.questions_count}</td>
+                                                        <td className="col text-secondary">{item?.questions_count}</td>
+                                                        <td className="col text-secondary">{item?.questions_count}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colSpan={5}>
+                                                        <span>Total number of Questions: {
+                                                            adminState?.campaigns_data?.question_pattern?.reduce(
+                                                                (acc, curr) => acc + Number(curr.questions_count || 0),
+                                                                0
+                                                            )}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        :
+                                        <div className="col-12 text-center">
+                                            <p className="text-secondary">Question pattern not added. its looks like empty!!!</p>
+                                        </div>
+                                }
+                            </div>
+                        </div>
                     default:
                         break;
                 }
@@ -180,12 +235,12 @@ export function OverallModel() {
             showModalHeader={true}
             modalHeaderClassname="border-0"
             modalHeader={modalHeaderFun()}
-            modalBodyClassname="py-2"
-            modalBody={<div className='d-flex flex-wrap p-3 py-0'>{modalBodyFun()}</div>}
+            modalBodyClassname={`${/lg|xl/.test(commonState?.modalSize) && commonState?.enable_lg_autoScroll ? "model_height_lg rounded-4" : ''} py-2`}
+            modalBody={<div className='d-flex flex-wrap p-3 py-0 h-100'>{modalBodyFun()}</div>}
             showModalFooter={true}
             modalFooterClassname="border-0"
             modalFooter={modalFooterFun()}
-            modalClassname={/lg|xl/.test(commonState?.modalSize) ? "model_height_lg rounded-4" : 'rounded-4'}
+            modalClassname={'rounded-4'}
         />
     )
 }

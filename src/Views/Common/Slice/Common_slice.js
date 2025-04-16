@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from 'js-cookie';
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { postOrEditCampign } from "Views/Admin/Slice/AdminSlice";
+import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern } from "Views/Admin/Slice/AdminSlice";
 import {
     registerCandidateFailure,
     registerCandidateResponse,
@@ -78,6 +78,7 @@ const commonSlice = createSlice({
                 modal_from: null,
                 modal_type: null,
                 modal_close_btn: true,
+                enable_lg_autoScroll: false
             });
         },
         updateToast(state, action) {
@@ -208,7 +209,8 @@ const commonSlice = createSlice({
                 modal_type: null,
                 modal_close_btn: true,
                 token: null,
-                user_role: null
+                user_role: null,
+                enable_lg_autoScroll: false
             });
         },
         updateOverallModalData(state, action) {
@@ -223,9 +225,6 @@ const commonSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(updateCandidateData, (state) => {
-                state.validated = false;
-            })
             .addCase(registerCandidateResponse, (state, action) => {
                 state.usernamee = action.payload?.username;
                 state.passwordd = action.payload?.password;
@@ -234,7 +233,8 @@ const commonSlice = createSlice({
                     modal_from: "interview_candidate",
                     modal_type: "registration_completed",
                     modalShow: true,
-                    modal_close_btn: false
+                    modal_close_btn: false,
+                    enable_lg_autoScroll: true
                 });
             })
             .addCase(submitTestByManual, (state) => {
@@ -243,7 +243,8 @@ const commonSlice = createSlice({
                     modal_from: "interview_candidate",
                     modal_type: "submit_confirmation",
                     modalShow: true,
-                    modal_close_btn: false
+                    modal_close_btn: false,
+                    enable_lg_autoScroll: true
                 });
             })
             .addCase(submitTestResponse, (state) => {
@@ -252,7 +253,8 @@ const commonSlice = createSlice({
                     modal_from: "interview_candidate",
                     modal_type: "test_completed",
                     modalShow: true,
-                    modal_close_btn: false
+                    modal_close_btn: false,
+                    enable_lg_autoScroll: true
                 });
             })
             .addCase(updateTimeOverCloseTest, (state, action) => {
@@ -263,12 +265,25 @@ const commonSlice = createSlice({
                     modal_from: "interview_candidate",
                     modal_type: "time_finished",
                     modalShow: true,
-                    modal_close_btn: false
+                    modal_close_btn: false,
+                    enable_lg_autoScroll: true
                 });
             })
 
 
             // matcher
+            .addMatcher(
+                function (action) {
+                    return [
+                        updateCandidateData.toString(),
+                        create_individual_campaign_ques_pattern.toString(),
+                    ].includes(action.type)
+                },
+                (state, action) => {
+                    state.validated = false;
+                }
+            )
+
             .addMatcher(
                 function (action) {
                     return [
@@ -291,6 +306,26 @@ const commonSlice = createSlice({
                     }
                 }
             )
+
+            .addMatcher(
+                function (action) {
+                    return [
+                        getCampaignAssignedQuestions.toString(),
+                    ].includes(action.type)
+                },
+                (state, action) => {
+                    if (action?.payload?.type === "request") {
+                        Object.assign(state, {
+                            modalShow: true,
+                            modalSize: "xl",
+                            modal_from: "admin",
+                            modal_type: "assign_question",
+                            modal_close_btn: true,
+                            validated: false,
+                        })
+                    }
+                }
+            )
     }
 });
 
@@ -306,6 +341,7 @@ function resetModal(state, action) {
     state.modal_from = null
     state.modal_type = null
     state.modal_close_btn = true
+    state.enable_lg_autoScroll = false
 }
 
 export const {

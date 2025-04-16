@@ -2,7 +2,7 @@ import ButtonComponent from 'Components/Button/Button'
 import React, { Fragment, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks'
-import { handleGetIndividualCampaign } from 'Views/Admin/Action/AdminAction';
+import { handleGetIndividualCampaign, handleGetQuestionTypes } from 'Views/Admin/Action/AdminAction';
 
 const Campaign_detail = () => {
     const { campaign_id } = useParams();
@@ -24,7 +24,7 @@ const Campaign_detail = () => {
                 <div className="flex-grow-1 text-end">
                     <div className="w-100 h-100 d-flex justify-content-end align-items-center">
                         <div className="px-2">
-                            <ButtonComponent type="button" buttonName="Generate Questions" className="btn btn-outline-dark" />
+                            <ButtonComponent type="button" buttonName="Generate Questions" className="btn btn-outline-dark" clickFunction={() => dispatch(handleGetQuestionTypes())} />
                         </div>
                     </div>
                 </div>

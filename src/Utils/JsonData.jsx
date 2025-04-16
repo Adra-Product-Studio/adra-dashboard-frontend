@@ -3,6 +3,7 @@ import useCommonState, { useDispatch } from 'ResuableFunctions/CustomHooks';
 import ShortUniqueId from 'short-unique-id';
 import { handleInterviewRegistrationOnChange } from 'Views/InterviewCandidates/Action/interviewAction';
 import { handleCreateCampaignOnChnage } from 'Views/Admin/Action/AdminAction';
+import { assignQuestionTypes } from 'Views/Admin/Slice/AdminSlice';
 
 const readFile = (file) => {
     return new Promise((resolve, reject) => {
@@ -583,6 +584,74 @@ const JsonData = () => {
                 change: (e) => dispatch(handleCreateCampaignOnChnage({ interview_date: e.target.value })),
                 isMandatory: true,
                 Err: commonState?.validated && !adminState?.create_campaign?.interview_date ? "Interview date required" : ''
+            },
+        ],
+
+        //                                                                 Admin Assign question
+        admin_create_assigning_questions: [
+            {
+                category: "heading",
+                title: "Available Questions",
+                divClassName: 'col-12 p-1 mt-2 text-center',
+            },
+            {
+                name: "Total Questions",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: `Available Questions = ${adminState?.available_questions_data?.total_no_of_questions}`,
+                divClassName: 'col-12 p-1 mt-2',
+                isMandatory: false,
+                disabled: true,
+            },
+            {
+                name: "Question Type",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: adminState?.create_assigning_questions?.question_type || '',
+                options: adminState?.available_questions_data?.data?.map((item) => item?.question_types) || [],
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(assignQuestionTypes({ question_type: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !adminState?.create_assigning_questions?.question_type ? "Question type required" : null
+            },
+            {
+                name: "Difficulty Level",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: adminState?.create_assigning_questions?.difficulty_level || '',
+                options: adminState?.available_questions_data?.difficulty_level?.map((item) => item?.level) || [],
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(assignQuestionTypes({ difficulty_level: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !adminState?.create_assigning_questions?.difficulty_level ? "Difficulty level required" : null
+            },
+            {
+                name: "Question count",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: adminState?.create_assigning_questions?.questions_count || '',
+                divClassName: 'col-9 p-1',
+                change: (e) => {
+                    if (/^\d*$/.test(e.target.value) && e.target.value <= adminState?.available_questions_data?.total_count) {
+                        dispatch(assignQuestionTypes({ questions_count: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !adminState?.create_assigning_questions?.questions_count ? "Count required" : null
+            },
+            {
+                name: "",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: `${adminState?.available_questions_data?.total_count || 0} Qs`,
+                divClassName: 'col-3 p-1 mt-4',
+                isMandatory: false,
+                disabled: true,
             },
         ]
     }
