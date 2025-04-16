@@ -7,6 +7,7 @@ import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunction
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import { handleEyeFunction, handleLogin, handleLoginCredentials, handleValidation } from 'Views/Common/Action/Common_action';
 import sha256 from 'sha256';
+import LinkComponent from 'Components/Router_components/LinkComponent';
 
 const LoginForm = () => {
     const { commonState } = useCommonState();
@@ -31,7 +32,7 @@ const LoginForm = () => {
     };
 
     return (
-        <Form noValidate validated={commonState?.validated} className='pb-3'>
+        <Form noValidate validated={commonState?.validated} className='pb-1'>
             <Row className="mb-3">
                 <InputGroup
                     controlId="validationLoginUsername"
@@ -71,6 +72,14 @@ const LoginForm = () => {
                 }
                 btnDisable={commonState?.buttonSpinner}
             />
+
+            <div className="text-end">
+                <LinkComponent
+                    className="mt-3 d-inline-block mb-0"
+                    to='/candidates_registration'
+                    title="Register as a candidate"
+                />
+            </div>
         </Form>
     )
 }
