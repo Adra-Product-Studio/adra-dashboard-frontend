@@ -127,7 +127,7 @@ export function OverallModel() {
                         </div>
 
                     case "assign_question":
-                        return <div className="col-12 mx-auto py-2 row h-100 align-items-center">
+                        return <div className="col-12 mx-auto py-2 row h-100 ">
                             <div className="col-lg-5 row align-items-center border-end pe-4">
                                 {Inputfunctions(JsonJsx?.admin_create_assigning_questions)}
 
@@ -144,7 +144,7 @@ export function OverallModel() {
                                 />
                             </div>
 
-                            <div className="col-lg-7 row align-items-center ps-2">
+                            <div className="col-lg-7 row ps-2 align-items-start">
                                 {
                                     adminState?.campaigns_data?.question_pattern?.length ?
                                         <table className="col-12 table table-hover">

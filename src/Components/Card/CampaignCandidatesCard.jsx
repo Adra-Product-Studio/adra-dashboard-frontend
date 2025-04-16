@@ -1,3 +1,4 @@
+import ButtonComponent from 'Components/Button/Button';
 import Img from 'Components/Img/Img'
 import React, { Fragment, useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap'
@@ -46,16 +47,21 @@ const CampaignCandidatesCard = ({
     }, [data?.test_EndedOn]);
 
     return (
-        <Card className={`bg-transparent rounded-4 ${card_className || ''}`} onClick={clickFunction}>
-            <Card.Body>
+        <Card className={`bg-transparent rounded-4 ${card_className || ''}`}>
+            <Card.Body className='pb-0'>
                 <div className={`row align-items-center border-bottom pb-3`}>
                     <div className="col-3">
                         <Img src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" alt="candidate image" width="80rem" height="80rem" className="rounded-circle" />
                     </div>
                     <div className="col-9">
-                        <h6>Name: <span className='ps-2'>{data?.name || ''}</span></h6>
-                        <p className='mb-1'>Age: <span className='ps-2'>{data?.age || ''}</span></p>
-                        <p className='mb-1'>Gender:<span className='ps-2'>{data?.gender || ''}</span></p>
+                        <h6><b>Name:</b> <span className='ps-2'>{data?.name || ''}</span></h6>
+                        {
+                            detail_view ?
+                                <p className='mb-1'><b>Age:</b> <span className='ps-2'>{data?.age || ''}</span></p>
+                                :
+                                null
+                        }
+                        <p className='mb-1'><b>Gender:</b> <span className='ps-2'>{data?.gender || ''}</span></p>
                     </div>
                 </div>
                 {
@@ -68,9 +74,9 @@ const CampaignCandidatesCard = ({
                                 ))
                             }
 
-                            <p className='mb-1'>Aptitude status:{apti_status(data?.status || '')}</p>
+                            <p className='mb-1'><b>Aptitude status:</b>{apti_status(data?.status || '')}</p>
                             {data?.test_EndedOn && data?.status !== "Test Completed" ?
-                                <p className='mb-1'>Time remaining: <span className='ps-2'>{timeLeft}</span></p>
+                                <p className='mb-1'><b>Time remaining:</b> <span className='ps-2'>{timeLeft}</span></p>
                                 :
                                 null
                             }
@@ -79,19 +85,19 @@ const CampaignCandidatesCard = ({
                         null
                 }
                 <div className="pt-3">
-                    <p className='mb-1'>Email:<span className='ps-2'>{data?.email || ''}</span></p>
-                    <p className='mb-1'>phone number:<span className='ps-2'>{data?.phoneNumber || ''}</span></p>
-                    <p className='mb-1'>Qualification:<span className='ps-2'>{data?.candidateQualification || ''}</span></p>
-                    <p className='mb-1'>Experience:<span className='ps-2'>{data?.experience || ''}</span></p>
-                    <p className='mb-1'>Address:<span className='ps-2'>{data?.address || ''}</span></p>
-                    <p className='mb-1'>Current salary:<span className='ps-2'>{data?.currentSalary || ''}</span></p>
-                    <p className='mb-1'>Expected salary:<span className='ps-2'>{data?.expectedSalary || ''}</span></p>
+                    <p className='mb-1'><b>Email:</b><span className='ps-2'>{data?.email || ''}</span></p>
+                    <p className='mb-1'><b>phone number:</b><span className='ps-2'>{data?.phoneNumber || ''}</span></p>
+                    <p className='mb-1'><b>Qualification:</b><span className='ps-2'>{data?.candidateQualification || ''}</span></p>
+                    <p className='mb-1'><b>Experience:</b><span className='ps-2'>{data?.experience || ''}</span></p>
+                    <p className='mb-1'><b>Address:</b><span className='ps-2'>{data?.address || ''}</span></p>
+                    <p className='mb-1'><b>Current salary:</b><span className='ps-2'>{data?.currentSalary || ''}</span></p>
+                    <p className='mb-1'><b>Expected salary:</b><span className='ps-2'>{data?.expectedSalary || ''}</span></p>
                     {
                         !detail_view ?
                             <Fragment>
-                                <p className='mb-1'>Aptitude status:{apti_status(data?.status || '')}</p>
+                                <p className='mb-1'><b>Aptitude status:</b>{apti_status(data?.status || '')}</p>
                                 {data?.test_EndedOn && data?.status !== "Test Completed" ?
-                                    <p className='mb-1'>Time remaining: <span className='ps-2'>{timeLeft}</span></p>
+                                    <p className='mb-1'><b>Time remaining:</b> <span className='ps-2'>{timeLeft}</span></p>
                                     :
                                     null
                                 }
@@ -103,27 +109,34 @@ const CampaignCandidatesCard = ({
                 {
                     detail_view ?
                         <div className="border-bottom">
-                            <p className='mb-1'>parent occupation:<span className='ps-2'>{data?.parentOccupation || ''}</span></p>
+                            <p className='mb-1'><b>parent occupation:</b><span className='ps-2'>{data?.parentOccupation || ''}</span></p>
 
-                            <p className='mb-1'>School name (SSLC):<span className='ps-2'>{data?.sslcSchoolName || ''}</span></p>
-                            <p className='mb-1'>Sslc Marks:<span className='ps-2'>{data?.sslcMarks || ''}</span></p>
+                            <p className='mb-1'><b>School name (SSLC):</b><span className='ps-2'>{data?.sslcSchoolName || ''}</span></p>
+                            <p className='mb-1'><b>Sslc Marks:</b><span className='ps-2'>{data?.sslcMarks || ''}</span></p>
 
-                            <p className='mb-1'>School name (HSC):<span className='ps-2'>{data?.hscSchoolName || ''}</span></p>
-                            <p className='mb-1'>Hsc Marks:<span className='ps-2'>{data?.hscMarks || ''}</span></p>
+                            <p className='mb-1'><b>School name (HSC):</b><span className='ps-2'>{data?.hscSchoolName || ''}</span></p>
+                            <p className='mb-1'><b>Hsc Marks:</b><span className='ps-2'>{data?.hscMarks || ''}</span></p>
 
-                            <p className='mb-1'>college name:<span className='ps-2'>{data?.collegeName || ''}</span></p>
-                            <p className='mb-1'>college Marks:<span className='ps-2'>{data?.collegeMarks || ''}</span></p>
+                            <p className='mb-1'><b>college name:</b><span className='ps-2'>{data?.collegeName || ''}</span></p>
+                            <p className='mb-1'><b>college Marks:</b><span className='ps-2'>{data?.collegeMarks || ''}</span></p>
 
-                            <p className='mb-1'>Experience:<span className='ps-2'>{data?.experience || ''}</span></p>
-                            <p className='mb-1'>Address:<span className='ps-2'>{data?.address || ''}</span></p>
-                            <p className='mb-1'>Current salary:<span className='ps-2'>{data?.currentSalary || ''}</span></p>
-                            <p className='mb-1'>Expected salary:<span className='ps-2'>{data?.expectedSalary || ''}</span></p>
+                            <p className='mb-1'><b>Experience:</b><span className='ps-2'>{data?.experience || ''}</span></p>
+                            <p className='mb-1'><b>Address:</b><span className='ps-2'>{data?.address || ''}</span></p>
+                            <p className='mb-1'><b>Current salary:</b><span className='ps-2'>{data?.currentSalary || ''}</span></p>
+                            <p className='mb-1'><b>Expected salary:</b><span className='ps-2'>{data?.expectedSalary || ''}</span></p>
                         </div>
                         :
                         null
                 }
-
             </Card.Body>
+            <Card.Footer className='border-0 bg-transparent pt-0 text-end'>
+                <ButtonComponent
+                    type="button"
+                    className="text-secondary"
+                    buttonName="View details..."
+                    clickFunction={clickFunction}
+                />
+            </Card.Footer>
         </Card >
     )
 }
