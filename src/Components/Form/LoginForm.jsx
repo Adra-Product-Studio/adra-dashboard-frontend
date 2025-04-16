@@ -23,7 +23,6 @@ const LoginForm = () => {
         if (commonState?.usernamee && commonState?.passwordd) {
             let username = commonState?.usernamee
             let password = commonState?.passwordd
-
             const basicAuth = btoa(`${username}:${sha256(password)}`);
             dispatch(handleLogin(basicAuth, navigate))
         } else {
