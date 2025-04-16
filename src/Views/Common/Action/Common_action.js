@@ -20,7 +20,6 @@ import {
 
     updateResetAllMenus
 } from 'Views/Common/Slice/Common_slice';
-import { IndexedDbDeleteFun } from 'Views/InterviewCandidates/IndexedDbDeleteFun';
 
 
 export const handleUpdateModalShow = (dispatch) => {
@@ -63,7 +62,6 @@ export const handleLogin = (basicAuth, navigate) => async (dispatch) => {
         });
 
         if (data.error_code === 0) {
-            if (data?.data?.user_role === "interview_candidate") IndexedDbDeleteFun();
             dispatch(loginResponse(data?.data))
             LoginSuccessNavigateTo(data?.data?.user_role, navigate)
         } else {

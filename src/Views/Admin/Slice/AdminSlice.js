@@ -68,6 +68,30 @@ const AdminSlice = createSlice({
                     break;
             }
         },
+        edit_individual_campaign_ques_pattern(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.add_pattern_spinner = true;
+                    break;
+
+                case "response":
+                    state.campaigns_data.question_pattern = data || state.campaigns_data.question_pattern;
+                    state.create_assigning_questions = {};
+                    state.add_pattern_spinner = false;
+                    state.available_questions_data.total_count = null
+                    state.available_questions_data.difficulty_level = null
+                    break;
+
+                case "failure":
+                    state.add_pattern_spinner = false;
+                    break;
+
+                default:
+                    break;
+            }
+        },
 
         // Create or update campaign
         postOrEditCampign(state, action) {
@@ -94,6 +118,32 @@ const AdminSlice = createSlice({
             }
         },
 
+        edit_campaign_data(state, action) {
+            let get_levels = state?.available_questions_data?.data
+                ?.filter(item => item.question_types === action.payload?.question_type) // filter by question_types
+                ?.map(item => item.difficulty_levels) // extract the difficulty_levels
+                .flat()
+
+            let get_count = get_levels
+                ?.find(item => item.level === action.payload?.difficulty_level)
+
+            state.create_assigning_questions = action.payload;
+            state.available_questions_data.difficulty_level = get_levels || [];
+            state.available_questions_data.total_count = get_count?.total_questions || 0;
+        },
+
+        delete_individual_campaign_ques_pattern(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "response":
+                    state.campaigns_data.question_pattern = data;
+                    break;
+                default:
+                    break;
+            }
+
+        },
         // Get individual campaign assigned questions
         getCampaignAssignedQuestions(state, action) {
             const { type, data } = action.payload;
@@ -147,12 +197,39 @@ const AdminSlice = createSlice({
                 state.create_assigning_questions['questions_count'] = '';
             }
         },
+
+        // Get individual campaign assigned questions
+        getCampaignCandidateDetails(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.campaign_candidate_details = {};
+                    state.campaign_candidate_glow = true;
+                    break;
+
+                case "response":
+                    state.campaign_candidate_details = data || {};
+                    state.campaign_candidate_glow = false;
+                    break;
+
+                case "failure":
+                    state.campaign_candidate_details = {};
+                    state.campaign_candidate_glow = false;
+                    break;
+
+                default:
+                    break;
+            }
+        },
     }
 });
 
 export const {
     update_create_campaign_data, getCampaign, postOrEditCampign,
-    getCampaignAssignedQuestions, assignQuestionTypes, create_individual_campaign_ques_pattern
+    getCampaignAssignedQuestions, assignQuestionTypes, create_individual_campaign_ques_pattern,
+    edit_campaign_data, edit_individual_campaign_ques_pattern, delete_individual_campaign_ques_pattern,
+    getCampaignCandidateDetails
 
 
 } = AdminSlice.actions;

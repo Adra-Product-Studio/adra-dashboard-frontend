@@ -9,7 +9,8 @@ import { handleCloseTestAndNavigate, handleCloseTestEndpoint } from "Views/Inter
 import Img from "Components/Img/Img";
 import Image from "Utils/Image";
 import { Inputfunctions } from "./Inputfunctions";
-import { handleAddOrUpdateQuestionPattern, handleCreateCampaign } from "Views/Admin/Action/AdminAction";
+import { handleAddOrUpdateQuestionPattern, handleCreateCampaign, handleDeleteQuestionPattern, handleEditQuestionPattern } from "Views/Admin/Action/AdminAction";
+import { edit_campaign_data } from "Views/Admin/Slice/AdminSlice";
 
 export function OverallModel() {
     const { commonState, interviewState, adminState } = useCommonState();
@@ -133,8 +134,13 @@ export function OverallModel() {
                                 <ButtonComponent
                                     type="button"
                                     className="btn btn-dark text-center w-100 mt-3"
-                                    buttonName="Add"
-                                    clickFunction={() => dispatch(handleAddOrUpdateQuestionPattern({ ...adminState?.create_assigning_questions, campaign_id: adminState?.campaigns_data?._id }))}
+                                    buttonName={adminState?.create_assigning_questions?._id ? "Update" : "Add"}
+                                    clickFunction={
+                                        adminState?.create_assigning_questions?._id ?
+                                            () => dispatch(handleEditQuestionPattern({ ...adminState?.create_assigning_questions, campaign_id: adminState?.campaigns_data?._id }))
+                                            :
+                                            () => dispatch(handleAddOrUpdateQuestionPattern({ ...adminState?.create_assigning_questions, campaign_id: adminState?.campaigns_data?._id }))
+                                    }
                                 />
                             </div>
 
@@ -157,8 +163,22 @@ export function OverallModel() {
                                                         <td className="col text-secondary">{item?.question_type}</td>
                                                         <td className="col text-secondary">{item?.difficulty_level}</td>
                                                         <td className="col text-secondary">{item?.questions_count}</td>
-                                                        <td className="col text-secondary">{item?.questions_count}</td>
-                                                        <td className="col text-secondary">{item?.questions_count}</td>
+                                                        <td className="col text-secondary">
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                className="btn-transparent"
+                                                                buttonName={Icons?.editIcon}
+                                                                clickFunction={() => dispatch(edit_campaign_data(item))}
+                                                            />
+                                                        </td>
+                                                        <td className="col text-secondary">
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                className="btn-transparent"
+                                                                buttonName={Icons?.deleteIcon}
+                                                                clickFunction={() => dispatch(handleDeleteQuestionPattern({ question_id: item?._id, campaign_id: adminState?.campaigns_data?._id }))}
+                                                            />
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>

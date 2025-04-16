@@ -208,15 +208,15 @@ const interviewSlice = createSlice({
         }
 
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(loginResponse, (state, action) => {
-                state.isDataPresentInIndexedDb = false
-                state.generatedQuestions = []
-                state.test_end_timeStamp = null
-                state.calculate_remaining_time = null
-            })
-    }
+    // extraReducers: (builder) => {
+    //     builder
+    //         .addCase(loginResponse, (state, action) => {
+    //             state.isDataPresentInIndexedDb = false
+    //             state.generatedQuestions = []
+    //             state.test_end_timeStamp = null
+    //             state.calculate_remaining_time = null
+    //         })
+    // }
 })
 
 

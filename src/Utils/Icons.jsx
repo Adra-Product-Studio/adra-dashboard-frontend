@@ -1,7 +1,11 @@
 import { RiErrorWarningLine } from "react-icons/ri";
 import { LiaIdCard } from "react-icons/lia";
+import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
 
 const closeTestIcon = <RiErrorWarningLine className="fs-1" />
+const editIcon = <MdOutlineEdit size={22} className="text-primary"/>
+const deleteIcon = <MdOutlineDelete size={22} className="text-danger"/>
+
 
 const interviewRoundNonActiveIcon = <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
     <circle cx="15" cy="15" r="15" fill="#303030" />
@@ -104,11 +108,12 @@ const campaign_confirm_candidate_icon = <svg width="20" height="20" viewBox="0 0
 </svg>
 
 const Icons = {
-    closeTestIcon,interviewRoundNonActiveIcon,interviewRoundActiveIcon,testSucccess,
-    timerIcon,dashboardIcon,employeeIcon, attendanceIcon, payrollIcon, interviewIcon,
+    closeTestIcon, interviewRoundNonActiveIcon, interviewRoundActiveIcon, testSucccess,
+    timerIcon, dashboardIcon, employeeIcon, attendanceIcon, payrollIcon, interviewIcon,
     circularIcon, invoicesIcon, notesIcon, doocumentIcon,
     profileDefautUserIcon, notificationIcon, menuIcon,
-    campaign_calender_icon, campaign_total_candidate_icon, campaign_confirm_candidate_icon
+    campaign_calender_icon, campaign_total_candidate_icon, campaign_confirm_candidate_icon,
+    editIcon, deleteIcon
 }
 
 export default Icons

@@ -13,6 +13,7 @@ import AdminAuth from "Views/Admin/Docs/AdminAuth";
 import Layout from "Views/Admin/Layout/Layout";
 import Campaign from 'Views/Admin/Docs/Campaign/Campaign';
 import Campaign_detail from "Views/Admin/Docs/Campaign/Campaign_detail";
+import Campaign_candidate_details from "Views/Admin/Docs/Campaign/Campaign_candidate_details";
 
 
 const App = () => {
@@ -43,6 +44,7 @@ const App = () => {
               <Route path="interview">
                 <Route index element={<Campaign />} />
                 <Route path=":campaign_id" element={<Campaign_detail />} />
+                <Route path="candidate/:campaign_id/:candidate_id" element={<Campaign_candidate_details />} />
               </Route>
 
               <Route path="circular" element={<p>circular</p>} />
