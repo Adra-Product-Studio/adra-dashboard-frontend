@@ -129,14 +129,19 @@ const CampaignCandidatesCard = ({
                         null
                 }
             </Card.Body>
-            <Card.Footer className='border-0 bg-transparent pt-0 text-end'>
-                <ButtonComponent
-                    type="button"
-                    className="text-secondary"
-                    buttonName="View details..."
-                    clickFunction={clickFunction}
-                />
-            </Card.Footer>
+            {
+                !detail_view ?
+                    <Card.Footer className='border-0 bg-transparent pt-0 text-end'>
+                        <ButtonComponent
+                            type="button"
+                            className="text-secondary"
+                            buttonName="View details..."
+                            clickFunction={clickFunction}
+                        />
+                    </Card.Footer>
+                    :
+                    null
+            }
         </Card >
     )
 }
