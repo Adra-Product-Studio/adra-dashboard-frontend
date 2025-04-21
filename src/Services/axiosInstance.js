@@ -4,7 +4,7 @@ import { handlerefreshToken } from "Views/Common/Action/Common_action";
 
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: /localhost/.test(window.location.hostname) ? process.env.REACT_APP__LOCAL_API_URL : process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   }

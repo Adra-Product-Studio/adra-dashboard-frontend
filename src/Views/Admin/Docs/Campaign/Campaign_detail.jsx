@@ -1,5 +1,6 @@
 import ButtonComponent from 'Components/Button/Button'
 import CampaignCandidatesCard from 'Components/Card/CampaignCandidatesCard';
+import SpinnerComponent from 'Components/Spinner/Spinner';
 import React, { Fragment, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import useCommonState, { useCustomNavigate, useDispatch } from 'ResuableFunctions/CustomHooks'
@@ -32,20 +33,28 @@ const Campaign_detail = () => {
                 </div>
             </div>
             <div className="campaign_detail_body">
-                {adminState?.campaigns_data?.candidates?.length ?
-                    <div className="row py-3">
-                        {adminState?.campaigns_data?.candidates?.map((item, index) => (
-                            <div className='col-12 col-md-6 col-lg-4 col-xl-3 p-1' key={index}>
-                                <CampaignCandidatesCard data={item} clickFunction={() => navigate(`/dashboard/interview/candidate/${campaign_id}/${item?.candidate_id}`)} />
-                            </div>
-                        ))}
-                    </div>
-                    :
-                    <div className="h-100 d-flex flex-column justify-content-center align-items-center">
+                {adminState?.campaign_placeholder ?
+                    <div className="campaign_detail_body d-flex flex-column justify-content-center align-items-center">
                         <div className="col-5 text-center">
-                            <h6 className='text-secondary'>No Candidates Found</h6>
+                            <SpinnerComponent />
+                            <p className='mt-2'>Getting campaign datas</p>
                         </div>
                     </div>
+                    :
+                    adminState?.campaigns_data?.candidates?.length ?
+                        <div className="row py-3">
+                            {adminState?.campaigns_data?.candidates?.map((item, index) => (
+                                <div className='col-12 col-md-6 col-lg-4 col-xl-3 p-1' key={index}>
+                                    <CampaignCandidatesCard data={item} clickFunction={() => navigate(`/dashboard/interview/candidate/${campaign_id}/${item?.candidate_id}`)} />
+                                </div>
+                            ))}
+                        </div>
+                        :
+                        <div className="h-100 d-flex flex-column justify-content-center align-items-center">
+                            <div className="col-5 text-center">
+                                <h6 className='text-secondary'>No Candidates Found</h6>
+                            </div>
+                        </div>
                 }
             </div>
         </Fragment>

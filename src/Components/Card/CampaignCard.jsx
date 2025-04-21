@@ -29,7 +29,7 @@ const CampaignCard = ({
     ]
 
     return (
-        <Card className='border-white rounded-4'>
+        <Card className='border rounded-4 h-100'>
             <Card.Header className='bg-transparent py-3'>
                 <h6 className={placeholder ? "placeholder w-75 py-3 rounded" : ''}>{campaign?.job_title || ''}</h6>
                 <p className={placeholder ? "placeholder w-50 py-3 rounded mb-0" : 'mb-0 text-secondary fs-13'}>

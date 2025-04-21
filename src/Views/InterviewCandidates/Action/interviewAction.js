@@ -78,6 +78,7 @@ const registerCandidateCall = params => async (dispatch) => {
 
         if (data?.error_code === 0) {
             dispatch(registerCandidateResponse(data?.data))
+            IndexedDbDeleteFun();
         } else {
             dispatch(registerCandidateFailure(data?.message))
         }
@@ -156,7 +157,6 @@ export const handleUpdateAnswer = (data) => (dispatch) => {
 
 export const handleCloseTestAndNavigate = dispatch => {
     dispatch(closeTestMode());
-    IndexedDbDeleteFun();
 }
 
 export const handleCloseTestAutomatic = candidate_answers => async dispatch => {

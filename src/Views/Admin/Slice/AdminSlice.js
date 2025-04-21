@@ -214,7 +214,7 @@ const AdminSlice = createSlice({
                     break;
 
                 case "failure":
-                    state.campaign_candidate_details = {};
+                    state.campaign_candidate_details = null;
                     state.campaign_candidate_glow = false;
                     break;
 

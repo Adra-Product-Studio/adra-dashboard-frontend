@@ -47,7 +47,7 @@ const CampaignCandidatesCard = ({
     }, [data?.test_EndedOn]);
 
     return (
-        <Card className={`bg-transparent rounded-4 ${card_className || ''}`}>
+        <Card className={`bg-transparent rounded-4 h-100 ${card_className || ''}`}>
             <Card.Body className='pb-0'>
                 <div className={`row align-items-center border-bottom pb-3`}>
                     <div className="col-3">
