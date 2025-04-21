@@ -9,7 +9,6 @@ import { handleGetRegistrationRoles, handleRegisterCandidate } from '../Action/i
 import SpinnerComponent from 'Components/Spinner/Spinner';
 import Img from 'Components/Img/Img';
 import Image from 'Utils/Image';
-import { generateDeviceIdentifier } from 'ResuableFunctions/Device_details';
 
 const InterviewCandidatesRegistration = () => {
     const { interviewState } = useCommonState();
@@ -18,8 +17,6 @@ const InterviewCandidatesRegistration = () => {
     const navigate = useCustomNavigate();
 
     useEffect(() => {
-        const deviceId = generateDeviceIdentifier();
-        console.log(deviceId)
         dispatch(handleGetRegistrationRoles())
     }, [])
 
