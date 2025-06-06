@@ -5,17 +5,13 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@reduxjs/toolkit": "^2.3.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "ajv": "^8.17.1",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
+    "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
-    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-dropdown-select": "^4.11.3",
     "react-google-autocomplete": "^2.7.3",
@@ -28,16 +24,16 @@
     "react-toastify": "^10.0.6",
     "recharts": "^2.15.0",
     "redux-thunk": "^3.1.0",
-    "sass": "^1.81.0",
     "sha256": "^0.2.0",
-    "short-unique-id": "^5.2.0",
-    "web-vitals": "^2.1.4"
+    "short-unique-id": "^5.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "cross-env REACT_APP_ENVIRONMENT=development react-scripts start",
+    "prod": "cross-env REACT_APP_ENVIRONMENT=production react-scripts build"
   },
   "eslintConfig": {
     "extends": [
@@ -56,8 +52,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "customize-cra": "^1.0.0"
   }
 }

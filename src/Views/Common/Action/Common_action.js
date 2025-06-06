@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { LoginSuccessNavigateTo } from 'ResuableFunctions/LoginSuccessNavigateTo';
 import axiosInstance from 'Services/axiosInstance';
 import {
@@ -54,12 +53,13 @@ export const handleResetValidation = dispatch => {
 export const handleLogin = (basicAuth, navigate) => async (dispatch) => {
     try {
         dispatch(loginRequest())
-        const { data } = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {}, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${basicAuth}`,
+        const { data } = await axiosInstance.post( '/login', {},
+            {
+                headers: {
+                    'Authorization': `Basic ${basicAuth}`,
+                }
             }
-        });
+        );
 
         if (data.error_code === 0) {
             dispatch(loginResponse(data?.data))

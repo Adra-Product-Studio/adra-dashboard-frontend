@@ -8,7 +8,6 @@ import Error from "Views/Common/Docs/error";
 import InterviewCandidatesRegistration from "Views/InterviewCandidates/Docs/InterviewCandidatesRegistration";
 import InterviewCandidatesHome from "Views/InterviewCandidates/Docs/InterviewCandidatesHome";
 import InterviewCandidatesAuth from "Views/InterviewCandidates/Docs/InterviewCandidatesAuth";
-import CandidateStatus from "CandidateStatus";
 import AdminAuth from "Views/Admin/Docs/AdminAuth";
 import Layout from "Views/Admin/Layout/Layout";
 import Campaign from 'Views/Admin/Docs/Campaign/Campaign';
@@ -30,8 +29,6 @@ const App = () => {
           <Route path="candidates_home" element={<InterviewCandidatesAuth />}>
             <Route index element={<InterviewCandidatesHome />} />
           </Route>
-
-          <Route path="CandidateStatus" element={<CandidateStatus />} />
 
           {/* Admin view */}
           <Route path="dashboard" element={<AdminAuth />}>

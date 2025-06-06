@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { initializeDB } from "ResuableFunctions/CustomHooks";
-import { loginResponse } from "Views/Common/Slice/Common_slice";
 
 const interviewSlice = createSlice({
     name: "Interview_slice",

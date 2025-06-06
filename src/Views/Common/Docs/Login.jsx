@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import LoginForm from 'Components/Form/LoginForm'
 import Img from 'Components/Img/Img'
 import Image from 'Utils/Image'

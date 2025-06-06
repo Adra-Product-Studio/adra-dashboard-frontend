@@ -17,7 +17,6 @@ export const handleGetCampaign = () => async (dispatch) => {
     try {
         dispatch(getCampaign({ type: "request" }))
         const { data } = await axiosInstance.get("/campaign")
-
         if (data?.error_code === 0) {
             dispatch(getCampaign({ type: "response", data: data?.data }))
         } else {
