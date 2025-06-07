@@ -19,7 +19,6 @@ export function decryptData(ciphertext) {
         const bytes = CryptoJS.TripleDES.decrypt(fixedCiphertext, process.env.REACT_APP_CRYPTO_SECRET_KEY);
         if (!bytes?.sigBytes) return "Invalid id"
         const originalData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
         return originalData;
     } catch (error) {
         return "Invalid id"

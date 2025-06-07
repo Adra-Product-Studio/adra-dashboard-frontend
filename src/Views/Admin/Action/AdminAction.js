@@ -17,11 +17,9 @@ export const handleGetCampaign = () => async (dispatch) => {
     try {
         dispatch(getCampaign({ type: "request" }))
         const { data } = await axiosInstance.get("/campaign")
-        if (data?.error_code === 0) {
-            dispatch(getCampaign({ type: "response", data: data?.data }))
-        } else {
-            dispatch(getCampaign({ type: "failure", message: data?.message }))
-        }
+
+        if (data?.error_code === 0) dispatch(getCampaign({ type: "response", data: data?.data }))
+        else dispatch(getCampaign({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(getCampaign({ type: "failure", message: Err?.message }))
     }
@@ -34,11 +32,8 @@ export const handleCreateCampaign = (params) => async (dispatch) => {
         dispatch(postOrEditCampign({ type: "request" }))
         const { data } = await axiosInstance.post("/campaign", params)
 
-        if (data?.error_code === 0) {
-            dispatch(postOrEditCampign({ type: "response", data: data?.data }))
-        } else {
-            dispatch(postOrEditCampign({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(postOrEditCampign({ type: "response", data: data?.data }))
+        else dispatch(postOrEditCampign({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(postOrEditCampign({ type: "failure", message: Err?.message }))
     }
@@ -51,11 +46,8 @@ export const handleGetIndividualCampaign = (params) => async (dispatch) => {
         dispatch(getCampaign({ type: "request" }))
         const { data } = await axiosInstance.get(`/campaign/${params?.campaign_id}`)
 
-        if (data?.error_code === 0) {
-            dispatch(getCampaign({ type: "response", data: data?.data }))
-        } else {
-            dispatch(getCampaign({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(getCampaign({ type: "response", data: data?.data }))
+        else dispatch(getCampaign({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(getCampaign({ type: "failure", message: Err?.message }))
     }
@@ -67,11 +59,8 @@ export const handleGetQuestionTypes = () => async (dispatch) => {
         dispatch(getCampaignAssignedQuestions({ type: "request" }))
 
         const { data } = await axiosInstance.get('/get_question_types')
-        if (data?.error_code === 0) {
-            dispatch(getCampaignAssignedQuestions({ type: "response", data: data?.data }))
-        } else {
-            dispatch(getCampaignAssignedQuestions({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(getCampaignAssignedQuestions({ type: "response", data: data?.data }))
+        else dispatch(getCampaignAssignedQuestions({ type: "failure", message: data?.message }))
     }
     catch (Err) {
         dispatch(getCampaignAssignedQuestions({ type: "failure", message: Err?.message }))
@@ -85,11 +74,8 @@ export const handleAddOrUpdateQuestionPattern = (params) => async (dispatch) => 
         dispatch(create_individual_campaign_ques_pattern({ type: "request" }))
 
         const { data } = await axiosInstance.post('/campaign_question_pattern', params)
-        if (data?.error_code === 0) {
-            dispatch(create_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
-        } else {
-            dispatch(create_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(create_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
+        else dispatch(create_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
     }
     catch (Err) {
         dispatch(create_individual_campaign_ques_pattern({ type: "failure", message: Err?.message }))
@@ -105,11 +91,8 @@ export const handleEditQuestionPattern = (params) => async (dispatch) => {
         dispatch(edit_individual_campaign_ques_pattern({ type: "request" }))
 
         const { data } = await axiosInstance.put('/campaign_question_pattern', params)
-        if (data?.error_code === 0) {
-            dispatch(edit_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
-        } else {
-            dispatch(edit_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(edit_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
+        else dispatch(edit_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
     }
     catch (Err) {
         dispatch(edit_individual_campaign_ques_pattern({ type: "failure", message: Err?.message }))
@@ -123,11 +106,8 @@ export const handleDeleteQuestionPattern = (params) => async (dispatch) => {
         dispatch(delete_individual_campaign_ques_pattern({ type: "request" }))
 
         const { data } = await axiosInstance.delete(`/campaign_question_pattern?question_id=${params?.question_id}&campaign_id=${params?.campaign_id}`)
-        if (data?.error_code === 0) {
-            dispatch(delete_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
-        } else {
-            dispatch(delete_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(delete_individual_campaign_ques_pattern({ type: "response", data: data?.data?.question_pattern }))
+        else dispatch(delete_individual_campaign_ques_pattern({ type: "failure", message: data?.message }))
     }
     catch (Err) {
         dispatch(delete_individual_campaign_ques_pattern({ type: "failure", message: Err?.message }))
@@ -139,11 +119,8 @@ export const handleGetIndividualCampaignCandidate = (params) => async (dispatch)
         dispatch(getCampaignCandidateDetails({ type: "request" }))
         const { data } = await axiosInstance.get(`/display_campaign_candidate_details/${params?.candidate_id}`)
 
-        if (data?.error_code === 0) {
-            dispatch(getCampaignCandidateDetails({ type: "response", data: data?.data }))
-        } else {
-            dispatch(getCampaignCandidateDetails({ type: "failure", message: data?.message }))
-        }
+        if (data?.error_code === 0) dispatch(getCampaignCandidateDetails({ type: "response", data: data?.data }))
+        else dispatch(getCampaignCandidateDetails({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(getCampaignCandidateDetails({ type: "failure", message: Err?.message }))
     }

@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern } from "Views/Admin/Slice/AdminSlice";
+import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails } from "Views/Admin/Slice/AdminSlice";
 import {
+    getQuestionsFailure,
+    getRegistrationRoles,
     registerCandidateFailure,
     registerCandidateResponse,
     submitTestByManual,
@@ -32,9 +34,9 @@ const initialState = {
     eyeOpen: false,
     validated: false,
 
-    token: Cookies.get("token") ? decryptData(Cookies.get("token")) : '',
-    user_id: Cookies.get('user_id') || '',
-    user_role: Cookies.get("user_role") || '',
+    token: Cookies.get('log') ? decryptData(Cookies.get('log'))?.token : '',
+    user_id: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_id : '',
+    user_role: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_role : '',
 
     showing_entries: [10, 20, 50],
     pageSize: 10,
@@ -110,29 +112,35 @@ const commonSlice = createSlice({
         },
         loginResponse(state, action) {
             const { token, user_role } = action.payload;
-            if (token) {
-                Cookies.set("token", encryptData(token));
-                state.token = token;
-            }
-            if (user_role) {
-                Cookies.set("user_role", user_role);
-                state.user_role = user_role;
-            }
+            let log = { token: token || '', user_role: user_role || '' }
+            Cookies.set('log', encryptData(log));
+
+            state.token = token || '';
+            state.user_role = user_role || '';
             state.buttonSpinner = false;
             state.eyeOpen = !state.eyeOpen;
         },
         updateToken(state, action) {
             const token = action.payload;
-            if (token) Cookies.set("token", token);
+
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            decrypt_cookie.token = token || '';
+            Cookies.set('log', encryptData(decrypt_cookie));
             state.token = token || '';
         },
         updateRemoveToken(state) {
-            Cookies.remove("token");
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            delete decrypt_cookie.token;
+            Cookies.set('log', encryptData(decrypt_cookie));
+
             state.token = '';
         },
         logout(state) {
-            Cookies.remove("token");
-            Cookies.remove("user_id");
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            delete decrypt_cookie.token;
+            delete decrypt_cookie.user_id;
+            Cookies.set('log', encryptData(decrypt_cookie));
+
             Object.assign(state, {
                 token: '',
                 usernamee: '',
@@ -200,8 +208,11 @@ const commonSlice = createSlice({
             state.apply_filter = false;
         },
         closeTestMode(state) {
-            Cookies.remove("token");
-            Cookies.remove("user_role");
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            delete decrypt_cookie.token;
+            delete decrypt_cookie.user_role;
+            Cookies.set('log', encryptData(decrypt_cookie));
+
             Object.assign(state, {
                 modalShow: false,
                 modalSize: "md",
@@ -289,6 +300,14 @@ const commonSlice = createSlice({
                     return [
                         registerCandidateFailure.toString(),
                         submitTestFailure.toString(),
+                        getCampaign.toString(),
+                        postOrEditCampign.toString(),
+                        getCampaignAssignedQuestions.toString(),
+                        create_individual_campaign_ques_pattern.toString(),
+                        delete_individual_campaign_ques_pattern.toString(),
+                        getCampaignCandidateDetails.toString(),
+                        getRegistrationRoles.toString(),
+                        getQuestionsFailure.toString(),
                     ].includes(action.type)
                 },
                 setErrorState

@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { initializeDB } from "ResuableFunctions/CustomHooks";
+import { decryptData, encryptData } from "Security/Crypto/Crypto";
 
 const interviewSlice = createSlice({
     name: "Interview_slice",
@@ -12,7 +13,7 @@ const interviewSlice = createSlice({
         isDataPresentInIndexedDb: true,
         selectedQuestionIndex: 0,
         answeredQuestionPercentage: 0,
-        test_end_timeStamp: Cookies.get("testEndOn") || '',
+        test_end_timeStamp: Cookies.get('log') ? decryptData(Cookies.get('log'))?.testEndOn : '',
         calculate_remaining_time: null,
         submit_test: false
     },
@@ -92,7 +93,9 @@ const interviewSlice = createSlice({
                 })
 
             if (action?.payload?.test_EndedOn) {
-                Cookies.set("testEndOn", action?.payload?.test_EndedOn)
+                let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+                decrypt_cookie.testEndOn = action?.payload?.test_EndedOn || '';
+                Cookies.set('log', encryptData(decrypt_cookie));
             }
 
             return {
@@ -137,7 +140,9 @@ const interviewSlice = createSlice({
             }
         },
         updateTimeOverCloseTest(state, action) {
-            Cookies.remove("testEndOn")
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            delete decrypt_cookie.testEndOn;
+            Cookies.set('log', encryptData(decrypt_cookie));
 
             return {
                 ...state,
@@ -172,7 +177,9 @@ const interviewSlice = createSlice({
             }
         },
         submitTestRequestSpinner(state, action) {
-            Cookies.remove("testEndOn")
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            delete decrypt_cookie.testEndOn;
+            Cookies.set('log', encryptData(decrypt_cookie));
 
             return {
                 ...state,

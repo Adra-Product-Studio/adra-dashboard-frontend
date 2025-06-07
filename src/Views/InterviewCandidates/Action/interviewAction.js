@@ -32,11 +32,9 @@ export const handleGetRegistrationRoles = () => async (dispatch) => {
     try {
         dispatch(getRegistrationRoles({ type: 'request' }))
         const { data } = await axiosInstance.post("/get_registration_roles", { check_campaign: new Date() })
-        if (data?.error_code === 0) {
-            dispatch(getRegistrationRoles({ type: 'response', data: data?.data }))
-        } else {
-            dispatch(getRegistrationRoles({ type: 'failure', data: data?.message }))
-        }
+
+        if (data?.error_code === 0) dispatch(getRegistrationRoles({ type: 'response', data: data?.data }))
+        else dispatch(getRegistrationRoles({ type: 'failure', message: data?.message }))
     } catch (Err) {
         dispatch(getRegistrationRoles({ type: 'failure', message: Err?.message }))
     }
@@ -51,20 +49,11 @@ export const handleRegisterCandidate = params => async (dispatch) => {
         params?.candidateData?.currentSalary) {
 
         if (params?.candidateData?.maritalStatus === "Married" || params?.candidateData?.experience === "experienced") {
-            if (params?.candidateData?.maritalStatus === "Married" && !params?.candidateData?.childrens) {
-                dispatch(handleValidation)
-                return
-            }
-
-            if (params?.candidateData?.experience === "experienced" && !params?.candidateData?.previousCompanyName && !params?.candidateData?.designation && !params?.candidateData?.canditateExpType) {
-                dispatch(handleValidation)
-                return
-            }
-
-            dispatch(registerCandidateCall(params?.candidateData))
-        } else {
+            if (params?.candidateData?.maritalStatus === "Married" && !params?.candidateData?.childrens) return dispatch(handleValidation)
+            if (params?.candidateData?.experience === "experienced" && !params?.candidateData?.previousCompanyName && !params?.candidateData?.designation && !params?.candidateData?.canditateExpType) return dispatch(handleValidation)
             dispatch(registerCandidateCall(params?.candidateData))
         }
+        else dispatch(registerCandidateCall(params?.candidateData))
     } else {
         dispatch(handleValidation)
     }
@@ -79,9 +68,8 @@ const registerCandidateCall = params => async (dispatch) => {
         if (data?.error_code === 0) {
             dispatch(registerCandidateResponse(data?.data))
             IndexedDbDeleteFun();
-        } else {
-            dispatch(registerCandidateFailure(data?.message))
         }
+        else dispatch(registerCandidateFailure(data?.message))
 
     } catch (Err) {
         dispatch(registerCandidateFailure(Err?.message))
@@ -94,11 +82,8 @@ export const handleGetQuestions = async (dispatch) => {
         dispatch(getQuestionsRequest())
         const { data } = await axiosInstance.get("/generate_random_question")
 
-        if (data?.error_code === 0) {
-            dispatch(getQuestionsResponse(data?.data))
-        } else {
-            dispatch(getQuestionsFailure(data?.message))
-        }
+        if (data?.error_code === 0) dispatch(getQuestionsResponse(data?.data))
+        else dispatch(getQuestionsFailure(data?.message))
     } catch (Err) {
         dispatch(getQuestionsFailure(Err?.message))
     }
@@ -172,9 +157,7 @@ export const handleCloseTestAutomatic = candidate_answers => async dispatch => {
         if (data?.error_code === 0) {
             dispatch(submitTestResponse())
             IndexedDbDeleteFun();
-        } else {
-            dispatch(submitTestFailure(data?.message))
-        }
+        } else dispatch(submitTestFailure(data?.message))
     }
     catch (Err) {
         dispatch(submitTestFailure(Err?.message))
@@ -197,9 +180,8 @@ export const handleCloseTestEndpoint = candidate_answers => async dispatch => {
         if (data?.error_code === 0) {
             dispatch(submitTestResponse())
             IndexedDbDeleteFun();
-        } else {
-            dispatch(submitTestFailure(data?.message))
         }
+        else dispatch(submitTestFailure(data?.message))
     }
     catch (Err) {
         dispatch(submitTestFailure(Err?.message))
