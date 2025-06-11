@@ -10,6 +10,7 @@
     "cross-env": "^7.0.3",
     "crypto-js": "^4.2.0",
     "js-cookie": "^3.0.5",
+    "qs": "^6.14.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.7",
     "react-dom": "^18.3.1",
@@ -32,8 +33,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "cross-env REACT_APP_ENVIRONMENT=development react-scripts start",
-    "prod": "cross-env REACT_APP_ENVIRONMENT=production react-scripts build"
+    "dev": "cross-env REACT_APP_ENVIRONMENT=development REACT_APP_API_URL=http://localhost:8000 react-scripts start",
+    "local_dev": "cross-env REACT_APP_ENVIRONMENT=production REACT_APP_API_URL=http://localhost:8000 react-scripts start",
+    "prod": "cross-env REACT_APP_ENVIRONMENT=production REACT_APP_API_URL=https://adminapi.adraproductstudio.com react-scripts build"
   },
   "eslintConfig": {
     "extends": [

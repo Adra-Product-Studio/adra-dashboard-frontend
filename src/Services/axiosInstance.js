@@ -5,7 +5,7 @@ import { aesDecrypt, encryptData } from "Security/Crypto/Crypto";
 
 
 const axiosInstance = axios.create({
-  baseURL: /localhost/.test(window.location.hostname) ? process.env.REACT_APP__LOCAL_API_URL : process.env.REACT_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -38,12 +38,17 @@ axiosInstance.interceptors.request.use((config) => {
   const token = state?.commonState?.token;
 
   if (process.env.REACT_APP_ENVIRONMENT === "production") {
+    // Split URL into path and query parameters
+    const [baseUrl, queryParams] = config.url?.split('?') || [];
+    const fullEndpoint = '/api/v1' + (baseUrl || '');
+
     const now = new Date();
     const future = new Date(now.getTime() + 30 * 1000).toISOString();
 
-    // Encrypt the URL
-    const encrypted_url = encryptData({ endpoint: '/api/v1' + config.url, validating_time: future });
-    config.url = `${encrypted_url}`;
+    // Include query params in encryption payload
+    const encrypted_url = encryptData({ endpoint: fullEndpoint, validating_time: future });
+    const encryptedQuery = encryptData({ query_string: queryParams });
+    config.url = queryParams ? `${encrypted_url}?${encryptedQuery}` : encrypted_url;
 
     // Encrypt the request body
     if (config.data && !(config.data instanceof FormData)) {
@@ -54,10 +59,9 @@ axiosInstance.interceptors.request.use((config) => {
   else config.url = '/api/v1' + config.url;
 
   // Headers
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) config.headers['Authorization'] = `Bearer ${token}`;
   if (config.data instanceof FormData) config.headers['Content-Type'] = 'multipart/form-data';
   else config.headers['Content-Type'] = 'application/json';
-
   return config;
 });
 
