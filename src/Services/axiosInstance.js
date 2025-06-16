@@ -37,9 +37,10 @@ axiosInstance.interceptors.request.use((config) => {
   const state = store.getState();
   const token = state?.commonState?.token;
 
+  // Split URL into path and query parameters
+  const [baseUrl, queryParams] = config.url?.split('?') || [];
+
   if (process.env.REACT_APP_ENVIRONMENT === "production") {
-    // Split URL into path and query parameters
-    const [baseUrl, queryParams] = config.url?.split('?') || [];
     const fullEndpoint = '/api/v1' + (baseUrl || '');
 
     const now = new Date();
@@ -59,7 +60,9 @@ axiosInstance.interceptors.request.use((config) => {
   else config.url = '/api/v1' + config.url;
 
   // Headers
-  if (token) config.headers['Authorization'] = `Bearer ${token}`;
+  if (!['/get_registration_roles', '/register_candidate'].includes(baseUrl)) {
+    if (token) config.headers['Authorization'] = `Bearer ${token}`;
+  }
   if (config.data instanceof FormData) config.headers['Content-Type'] = 'multipart/form-data';
   else config.headers['Content-Type'] = 'application/json';
   return config;

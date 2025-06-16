@@ -21,7 +21,6 @@ import {
 } from "Views/InterviewCandidates/Slice/interviewSlice";
 import { IndexedDbDeleteFun } from "Views/InterviewCandidates/IndexedDbDeleteFun";
 import { initializeDB } from "ResuableFunctions/CustomHooks";
-import axios from "axios";
 
 //                                                                 candidate registration on change 
 export const handleInterviewRegistrationOnChange = ipVal => dispatch => {
@@ -32,7 +31,7 @@ export const handleInterviewRegistrationOnChange = ipVal => dispatch => {
 export const handleGetRegistrationRoles = () => async (dispatch) => {
     try {
         dispatch(getRegistrationRoles({ type: 'request' }))
-        const { data } = await axios.post("/get_registration_roles", { check_campaign: new Date() })
+        const { data } = await axiosInstance.post("/get_registration_roles", { check_campaign: new Date() })
 
         if (data?.error_code === 0) dispatch(getRegistrationRoles({ type: 'response', data: data?.data }))
         else dispatch(getRegistrationRoles({ type: 'failure', message: data?.message }))
@@ -64,7 +63,7 @@ const registerCandidateCall = params => async (dispatch) => {
 
     try {
         dispatch(registerCandidateRequest())
-        const { data } = await axios.post("/register_candidate", params)
+        const { data } = await axiosInstance.post("/register_candidate", params)
 
         if (data?.error_code === 0) {
             dispatch(registerCandidateResponse(data?.data))
