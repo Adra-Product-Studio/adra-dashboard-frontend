@@ -13,6 +13,7 @@ import Layout from "Views/Admin/Layout/Layout";
 import Campaign from 'Views/Admin/Docs/Campaign/Campaign';
 import Campaign_detail from "Views/Admin/Docs/Campaign/Campaign_detail";
 import Campaign_candidate_details from "Views/Admin/Docs/Campaign/Campaign_candidate_details";
+import FellowshipCandidatesRegistration from "Views/Common/Docs/FellowshipCandidatesRegistration";
 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
         <Route element={<InitializeProjectSetup />}>
           <Route path="/" element={<Login />} />
           <Route path="candidates_registration" element={<InterviewCandidatesRegistration />} />
+          <Route path="fellowship_candidate_register" element={<FellowshipCandidatesRegistration />} />
 
           {/* interview candidates Views */}
           <Route path="candidates_home" element={<InterviewCandidatesAuth />}>

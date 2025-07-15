@@ -50,7 +50,8 @@ const initialState = {
     search_clicked: false,
 
     apply_filter_clicked: false,
-    apply_filter: false
+    apply_filter: false,
+    fellowship_candidate_register: {}
 };
 
 const commonSlice = createSlice({
@@ -232,6 +233,37 @@ const commonSlice = createSlice({
                 modal_from: from,
                 modal_type: type
             });
+        },
+        updateFellowshipCandidatesData(state, action) {
+            Object.entries(action.payload)?.map(([keys, value]) => (
+                state.fellowship_candidate_register = {
+                    ...state.fellowship_candidate_register,
+                    [keys]: value
+                }
+            ))
+            state.validated = false;
+        },
+        fellowship_candidate_register_endpoint(state, action) {
+            const { type, message } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.buttonSpinner = true;
+                    break;
+                case "response":
+                    state.buttonSpinner = false;
+                    state.fellowship_candidate_register = {};
+                    state.Err = message || "Something went wrong";
+                    state.Toast_Type = "success";
+                    break;
+                case "failure":
+                    state.buttonSpinner = false;
+                    state.Err = message || "Something went wrong";
+                    state.Toast_Type = "error";
+                    break;
+                default:
+                    break;
+            }
         }
     },
     extraReducers: (builder) => {
@@ -371,7 +403,9 @@ export const {
     updateResetAllMenus, updatePaginationSize, updateCurrentPage,
     updateSearchValue, clearSearch, updateSearchClickedTrue,
     updateSearchClickedFalse, updateEntriesCount, updateApplyFilterClickedTrue,
-    updateApplyFilterClickedFalse, closeTestMode, updateOverallModalData
+    updateApplyFilterClickedFalse, closeTestMode, updateOverallModalData,
+    updateFellowshipCandidatesData, fellowship_candidate_register_endpoint
+
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

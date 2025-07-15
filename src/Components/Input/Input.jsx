@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 const Input = ({
     componentFrom,
     className,
+    accept,
     htmlFor,
     type,
     placeholder,
@@ -41,6 +42,7 @@ const Input = ({
                 id={htmlFor}
                 placeholder={placeholder}
                 className={className}
+                accept={accept}
                 onChange={change}
                 onKeyDown={keyDown}
                 multiple={multiple}

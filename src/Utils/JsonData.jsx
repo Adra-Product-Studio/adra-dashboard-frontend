@@ -4,6 +4,7 @@ import ShortUniqueId from 'short-unique-id';
 import { handleInterviewRegistrationOnChange } from 'Views/InterviewCandidates/Action/interviewAction';
 import { handleCreateCampaignOnChnage } from 'Views/Admin/Action/AdminAction';
 import { assignQuestionTypes } from 'Views/Admin/Slice/AdminSlice';
+import { updateFellowshipCandidatesData, updateToast } from 'Views/Common/Slice/Common_slice';
 
 const readFile = (file) => {
     return new Promise((resolve, reject) => {
@@ -23,14 +24,14 @@ const readFile = (file) => {
     });
 };
 
-function formatDateForInput(date) {
-    if (!date) return ""; // Return empty if date is null
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
+// function formatDateForInput(date) {
+//     if (!date) return ""; // Return empty if date is null
+//     const d = new Date(date);
+//     const year = d.getFullYear();
+//     const month = String(d.getMonth() + 1).padStart(2, "0");
+//     const day = String(d.getDate()).padStart(2, "0");
+//     return `${year}-${month}-${day}`;
+// };
 
 const filesizes = (bytes, decimals = 2) => {
     if (bytes === 0) return "0 Bytes";
@@ -182,8 +183,7 @@ const JsonData = () => {
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 value: interviewState?.candidateData?.age || '',
                 change: (e) => {
-                    if (/^\d*$/.test(e.target.value)) {
-                        console.log("/^\d*$/.test(e.target.value)")
+                    if (/^\d*$/.test(e.target.value) && e.target.value <= 100) {
                         dispatch(handleInterviewRegistrationOnChange({ age: e.target.value }))
                     }
                 },
@@ -198,7 +198,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.phoneNumber || '',
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 change: (e) => {
-                    if (/^\d*$/.test(e.target.value)) {
+                    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 12) {
                         dispatch(handleInterviewRegistrationOnChange({ phoneNumber: e.target.value }))
                     }
                 },
@@ -304,7 +304,7 @@ const JsonData = () => {
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ siblings: e.target.value })),
                 isMandatory: true,
-                Err: commonState?.validated && !interviewState?.candidateData?.name ? "Brother / Sister name required" : null
+                Err: commonState?.validated && !interviewState?.candidateData?.siblings ? "Brother / Sister name required" : null
             },
             {
                 name: "Address (Cbe if Any)",
@@ -334,7 +334,7 @@ const JsonData = () => {
                 divClassName: 'col-6 p-1 mt-2',
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ sslcSchoolName: e.target.value })),
                 isMandatory: true,
-                Err: commonState?.validated && !interviewState?.candidateData?.name ? "School Name required" : null
+                Err: commonState?.validated && !interviewState?.candidateData?.sslcSchoolName ? "School Name required" : null
             },
             {
                 name: "Marks/Percentage",
@@ -344,7 +344,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.sslcMarks || '',
                 divClassName: 'col-6 p-1 mt-2',
                 change: (e) => {
-                    if (/^\d*\.?\d*$/.test(e.target.value)) {
+                    if (/^\d*\.?\d*$/.test(e.target.value) && e.target.value <= 100) {
                         dispatch(handleInterviewRegistrationOnChange({ sslcMarks: e.target.value }));
                     }
                 },
@@ -371,7 +371,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.hscMarks || '',
                 divClassName: 'col-6 p-1 mt-2',
                 change: (e) => {
-                    if (/^\d*\.?\d*$/.test(e.target.value)) {
+                    if (/^\d*\.?\d*$/.test(e.target.value) && e.target.value <= 100) {
                         dispatch(handleInterviewRegistrationOnChange({ hscMarks: e.target.value }))
                     }
                 },
@@ -408,7 +408,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.collegeMarks || '',
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 change: (e) => {
-                    if (/^\d*\.?\d*$/.test(e.target.value)) {
+                    if (/^\d*\.?\d*$/.test(e.target.value) && e.target.value <= 100) {
                         dispatch(handleInterviewRegistrationOnChange({ collegeMarks: e.target.value }))
                     }
                 },
@@ -653,6 +653,354 @@ const JsonData = () => {
                 isMandatory: false,
                 disabled: true,
             },
+        ],
+        fellowshipCandidatesRegistration: [
+            {
+                name: "Full Name",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                value: commonState?.fellowship_candidate_register?.fullname || '',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ fullname: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.fullname ? "Full Name required" : null
+            },
+            {
+                name: "Age",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                value: commonState?.fellowship_candidate_register?.age || '',
+                change: (e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) <= 100)) {
+                        dispatch(updateFellowshipCandidatesData({ age: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.age ? "Age required" : null
+            },
+            {
+                name: "Phone number",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                value: commonState?.fellowship_candidate_register?.phone_no || '',
+                change: (e) => {
+                    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 10) {
+                        dispatch(updateFellowshipCandidatesData({ phone_no: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.phone_no ? "Phone number required" : null
+            },
+            {
+                name: "Email",
+                type: "email",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                value: commonState?.fellowship_candidate_register?.email_id || '',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ email_id: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.email_id ? "Email id required" : null
+            },
+            {
+                name: "Gender",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.gender || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                options: jsonOnly.gender,
+                change: (e) => dispatch(updateFellowshipCandidatesData({ gender: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.gender ? "Gender required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Candidate Recent photo",
+                type: "file",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                accept: "image/jpeg,image/jpg,image/png",
+                value: commonState?.fellowship_candidate_register?.image_show_ui || [],
+                change: (e) => {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    const files = Array.from(e.target.files);
+
+                    const validFiles = files.filter(file => allowedTypes.includes(file.type));
+                    if (validFiles.length === 0) return dispatch(updateToast({ type: "error", message: "Please upload valid image files (jpg, jpeg, png)" }));
+
+                    Promise.all(validFiles.map((file) => readFile(file)))
+                        .then((results) => {
+                            dispatch(updateFellowshipCandidatesData({
+                                image_show_ui: results,
+                                image: validFiles,
+                            }));
+                        })
+                        .catch((error) => console.error('Error reading files:', error));
+                },
+                deleteImg: (e) => {
+                    let remove_image = commonState?.fellowship_candidate_register?.image_show_ui.filter((item) => item?.id !== e);
+                    dispatch(updateFellowshipCandidatesData({ image_show_ui: remove_image, image: {} }));
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.image_show_ui?.length ? "Recent photo required" : null
+            },
+            {
+                name: "Work experience",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.work_experience || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                options: ['Yes', 'No'],
+                change: (e) => dispatch(updateFellowshipCandidatesData({ work_experience: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.work_experience ? "work experience required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Having laptop",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.have_laptop || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                options: ['Yes', 'No'],
+                change: (e) => dispatch(updateFellowshipCandidatesData({ have_laptop: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.have_laptop ? "Having laptop required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Address",
+                type: "textbox",
+                category: "textbox",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.address || '',
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ address: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.address ? "Address required" : null,
+                isMandatory: true
+            },
+
+            {
+                category: "heading",
+                title: "Family details",
+                divClassName: 'col-12 p-1 mt-2',
+            },
+            {
+                name: `Parent name`,
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.parent_name || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ parent_name: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.parent_name ? "Parent / Husband name required" : null
+            },
+            {
+                name: `Parent occupation`,
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.parent_occupation || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ parent_occupation: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.parent_occupation ? "Parent / Husband occupation required" : null
+            },
+            {
+                name: "Marital status",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.marital_status || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                options: ['Yes', 'No'],
+                change: (e) => dispatch(updateFellowshipCandidatesData({ marital_status: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.marital_status ? "Marital status required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Childrens",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.have_children || '',
+                divClassName: `col-12 col-md-6 col-lg-4 p-1 mt-2 ${commonState?.fellowship_candidate_register?.marital_status ? commonState?.fellowship_candidate_register?.marital_status === "Yes" ? "" : "d-none" : "d-none"}`,
+                options: ['Yes', 'No'],
+                change: (e) => dispatch(updateFellowshipCandidatesData({ have_children: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.have_children ? "Marital status required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Brother / Sister",
+                type: "normal_select",
+                category: "select",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.have_siblings || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                options: ['Yes', 'No'],
+                change: (e) => dispatch(updateFellowshipCandidatesData({ have_siblings: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.have_siblings ? "Brother / Sister required" : null
+            },
+
+            {
+                category: "heading",
+                title: "Academics & Education",
+                divClassName: 'col-12 p-1 mt-2',
+            },
+            {
+                name: "School Name (SSLC)",
+                sub_heading: "school/college",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.sslc_school_name || '',
+                divClassName: 'col-6 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ sslc_school_name: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.sslc_school_name ? "School Name required" : null
+            },
+            {
+                name: "Marks/Percentage",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.sslc_percentage || '',
+                divClassName: 'col-6 p-1 mt-2',
+                change: (e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                        dispatch(updateFellowshipCandidatesData({ sslc_percentage: e.target.value }));
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.sslc_percentage ? "Marks/Percentage required" : null
+            },
+            {
+                name: "School Name (HSC)",
+                sub_heading: "school/college",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.hsc_school_name || '',
+                divClassName: 'col-6 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ hsc_school_name: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.hsc_school_name ? "School Name required" : null
+            },
+            {
+                name: "Marks/Percentage",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.hsc_percentage || '',
+                divClassName: 'col-6 p-1 mt-2',
+                change: (e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                        dispatch(updateFellowshipCandidatesData({ hsc_percentage: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.hsc_percentage ? "Marks/Percentage required" : null
+            },
+            {
+                name: "College",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.college_name || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ college_name: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.college_name ? "College Name required" : null
+            },
+            {
+                name: "Qualification",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.clg_qualification || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ clg_qualification: e.target.value })),
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.clg_qualification ? "Qualification required" : null
+            },
+            {
+                name: "CGPA/Percentage",
+                type: "text",
+                category: "input",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.clg_percentage || '',
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                change: (e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                        dispatch(updateFellowshipCandidatesData({ clg_percentage: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.clg_percentage ? "Marks/Percentage required" : null
+            },
+
+            {
+                category: "heading",
+                title: "Additional Questions",
+                divClassName: 'col-12 p-1 mt-2',
+            },
+
+            {
+                name: "Why are you interested in software development?",
+                type: "textbox",
+                category: "textbox",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.software_interest_reason || '',
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ software_interest_reason: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.software_interest_reason ? "Reason required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Why do you want to join this fellowship?",
+                type: "textbox",
+                category: "textbox",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.reason_for_joining || '',
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ reason_for_joining: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.reason_for_joining ? "Reason required" : null,
+                isMandatory: true
+            },
+            {
+                name: "If you are a college student (or) Currently working, how do you plan to balance your existing commitments with the fellowship?",
+                type: "textbox",
+                category: "textbox",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.commitment_balance_plan || '',
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ commitment_balance_plan: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.commitment_balance_plan ? "Reason required" : null,
+                isMandatory: true
+            },
+            {
+                name: "Remarks and Questions if any",
+                type: "textbox",
+                category: "textbox",
+                placeholder: "",
+                value: commonState?.fellowship_candidate_register?.remarks || '',
+                divClassName: 'col-12 p-1 mt-2',
+                change: (e) => dispatch(updateFellowshipCandidatesData({ remarks: e.target.value })),
+                Err: commonState?.validated && !commonState?.fellowship_candidate_register?.remarks ? "Reason required" : null,
+                isMandatory: true
+            }
         ]
     }
 

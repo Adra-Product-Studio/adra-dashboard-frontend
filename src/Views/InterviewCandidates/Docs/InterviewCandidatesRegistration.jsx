@@ -26,7 +26,7 @@ const InterviewCandidatesRegistration = () => {
 
             <section className='main'>
                 <div className="h-100 d-flex flex-wrap align-items-center justify-content-center">
-                    {
+                    {/* {
                         interviewState?.registration_placeholder ?
                             <div className="campaign_detail_body d-flex flex-column justify-content-center align-items-center">
                                 <div className="col-5 text-center">
@@ -35,7 +35,7 @@ const InterviewCandidatesRegistration = () => {
                                 </div>
                             </div>
                             :
-                            interviewState?.registration_roles?.length ?
+                            interviewState?.registration_roles?.length ? */}
                                 <div className="col-12 col-md-10 col-lg-8">
                                     <Card className='w-100'>
                                         <Card.Header className='py-3'>
@@ -60,13 +60,13 @@ const InterviewCandidatesRegistration = () => {
                                         />
                                     </div>
                                 </div>
-                                :
+                                {/* :
                                 <div className="col-12 col-md-10 col-lg-8 text-center">
                                     <Img src={Image?.Task_empty} alt="no_campaigns" width="170em" />
                                     <p>Sorry, No openings are available for registration</p>
                                     <ButtonComponent type="button" buttonName="Back to home" className="btn btn-dark" clickFunction={() => navigate("/")} />
                                 </div>
-                    }
+                    } */}
                 </div>
             </section>
         </div >

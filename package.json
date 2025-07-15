@@ -22,7 +22,6 @@
     "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.6",
-    "recharts": "^2.15.0",
     "redux-thunk": "^3.1.0",
     "sha256": "^0.2.0",
     "short-unique-id": "^5.2.0"
@@ -32,7 +31,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "cross-env REACT_APP_ENVIRONMENT=development REACT_APP_API_URL=http://localhost:8000 react-scripts start",
+    "dev": "cross-env REACT_APP_ENVIRONMENT=development REACT_APP_API_URL=http://10.10.1.30:8000 react-scripts start",
     "local_dev": "cross-env REACT_APP_ENVIRONMENT=production REACT_APP_API_URL=http://localhost:8000 react-scripts start",
     "prod": "cross-env REACT_APP_ENVIRONMENT=production REACT_APP_API_URL=https://adminapi.adraproductstudio.com react-scripts build"
   },

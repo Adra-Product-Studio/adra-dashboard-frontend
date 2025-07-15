@@ -474,3 +474,8 @@
 .campaign_candidate_overflow::-webkit-scrollbar {
   width: 0;
 }
+
+.card,
+.card-header{
+  border: 1px solid #80808026;
+} 

@@ -1,23 +1,13 @@
 import { LoginSuccessNavigateTo } from 'ResuableFunctions/LoginSuccessNavigateTo';
 import axiosInstance from 'Services/axiosInstance';
 import {
-    updateModalShow,
-    updateCanvasShow,
-    updateLoginCredentials,
-    updateEyeFunction,
+    updateModalShow, updateCanvasShow,
+    updateLoginCredentials, updateEyeFunction,
+    clearError, resetValidation, updateValidation,
+    loginRequest, loginResponse, updateToast,
+    updateToken, updateRemoveToken, logout,
+    updateResetAllMenus, fellowship_candidate_register_endpoint
 
-    clearError,
-    resetValidation,
-    updateValidation,
-
-    loginRequest,
-    loginResponse,
-    updateToast,
-    updateToken,
-    updateRemoveToken,
-    logout,
-
-    updateResetAllMenus
 } from 'Views/Common/Slice/Common_slice';
 
 
@@ -53,7 +43,7 @@ export const handleResetValidation = dispatch => {
 export const handleLogin = (basicAuth, navigate) => async (dispatch) => {
     try {
         dispatch(loginRequest())
-        const { data } = await axiosInstance.post( '/login', {},
+        const { data } = await axiosInstance.post('/login', {},
             {
                 headers: {
                     'Authorization': `Basic ${basicAuth}`,
@@ -97,4 +87,36 @@ export const handlerefreshToken = () => async (dispatch) => {
 //reset all 
 export const handleResetAlMenus = dispatch => {
     dispatch(updateResetAllMenus())
+}
+
+export const handleFellowshipRegisterCandidate = ({ fellowshipCandidatesRegistration, input_data }) => async (dispatch) => {
+    const fd = new FormData();
+    let params = Object.assign({}, input_data);
+    if ('image_show_ui' in params) delete params['image_show_ui'];
+
+
+    const findNullEmptyValues = fellowshipCandidatesRegistration
+        .map((items) => items?.value)
+        .some((value) => value === "" || (Array.isArray(value) && value.length === 0));
+
+    if (findNullEmptyValues) {
+        dispatch(handleValidation)
+        return dispatch(updateToast({ message: "Please fill all the fields", type: "error" }));
+    }
+
+    Object.keys(params).forEach((key) => {
+        if (key === 'image') fd.append(key, params[key][0]);
+        else fd.append(key, params[key]);
+    })
+
+    try {
+        dispatch(fellowship_candidate_register_endpoint({ type: "request" }))
+        const { data } = await axiosInstance.post("/fellowship_candidate_form", fd)
+
+        if (data?.error_code === 0) dispatch(fellowship_candidate_register_endpoint({ data: data?.data || {}, type: "response", message: data?.message || '' }))
+        else dispatch(fellowship_candidate_register_endpoint({ message: data?.message, type: "failure" }))
+
+    } catch (err) {
+        dispatch(fellowship_candidate_register_endpoint({ message: err?.message, type: "failure" }))
+    }
 }

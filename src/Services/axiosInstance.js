@@ -14,7 +14,9 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => {
     if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...response, data: aesDecrypt(response.data) };
-    else return response;
+    else {
+      return response;
+    }
   },
   async (error) => {
     try {
@@ -25,6 +27,8 @@ axiosInstance.interceptors.response.use(
           await store.dispatch(handlerefreshToken());
           return axiosInstance(originalRequest);
         }
+      } else {
+        return Promise.reject(error?.response?.data || {});
       }
     } catch (err) {
       return Promise.reject(err);
