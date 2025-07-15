@@ -96,6 +96,7 @@ export const handleFellowshipRegisterCandidate = ({ fellowshipCandidatesRegistra
 
 
     const findNullEmptyValues = fellowshipCandidatesRegistration
+        .filter((items) => items?.isMandatory)
         .map((items) => items?.value)
         .some((value) => value === "" || (Array.isArray(value) && value.length === 0));
 

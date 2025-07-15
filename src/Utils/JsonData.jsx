@@ -831,7 +831,7 @@ const JsonData = () => {
                 type: "normal_select",
                 category: "select",
                 placeholder: "",
-                value: commonState?.fellowship_candidate_register?.have_children || '',
+                value: commonState?.fellowship_candidate_register?.have_children || 'No',
                 divClassName: `col-12 col-md-6 col-lg-4 p-1 mt-2 ${commonState?.fellowship_candidate_register?.marital_status ? commonState?.fellowship_candidate_register?.marital_status === "Yes" ? "" : "d-none" : "d-none"}`,
                 options: ['Yes', 'No'],
                 change: (e) => dispatch(updateFellowshipCandidatesData({ have_children: e.target.value })),
@@ -877,7 +877,7 @@ const JsonData = () => {
                 divClassName: 'col-6 p-1 mt-2',
                 change: (e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) <= 100)) {
                         dispatch(updateFellowshipCandidatesData({ sslc_percentage: e.target.value }));
                     }
                 },
@@ -905,7 +905,7 @@ const JsonData = () => {
                 divClassName: 'col-6 p-1 mt-2',
                 change: (e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) <= 100)) {
                         dispatch(updateFellowshipCandidatesData({ hsc_percentage: e.target.value }))
                     }
                 },
@@ -943,7 +943,7 @@ const JsonData = () => {
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 change: (e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value) && (value === '' || Number(value) < 100)) {
+                    if (/^\d*$/.test(value) && (value === '' || Number(value) <= 100)) {
                         dispatch(updateFellowshipCandidatesData({ clg_percentage: e.target.value }))
                     }
                 },

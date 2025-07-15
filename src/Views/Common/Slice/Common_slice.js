@@ -253,7 +253,7 @@ const commonSlice = createSlice({
                 case "response":
                     state.buttonSpinner = false;
                     state.fellowship_candidate_register = {};
-                    state.Err = message || "Something went wrong";
+                    state.Err = message || "Candidate Registration successful";
                     state.Toast_Type = "success";
                     break;
                 case "failure":
