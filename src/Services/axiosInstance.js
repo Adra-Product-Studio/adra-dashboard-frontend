@@ -48,7 +48,7 @@ axiosInstance.interceptors.request.use((config) => {
     const fullEndpoint = '/api/v1' + (baseUrl || '');
 
     const now = new Date();
-    const future = new Date(now.getTime() + 30 * 1000).toISOString();
+    const future = new Date(now.getTime() + 45 * 1000).toISOString();
 
     // Include query params in encryption payload
     const encrypted_url = encryptData({ endpoint: fullEndpoint, validating_time: future });
