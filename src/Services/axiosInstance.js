@@ -13,12 +13,17 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...response, data: aesDecrypt(response.data) };
+    if (process.env.REACT_APP_ENVIRONMENT === "production") {
+      return { ...response, data: aesDecrypt(response.data) };
+    }
     else {
       return response;
     }
   },
   async (error) => {
+    if (process.env.REACT_APP_ENVIRONMENT === "production") console.log("Error:", aesDecrypt(error.response.data))
+    else console.log("Error:", error.response.data)
+
     try {
       const originalRequest = error.config;
       if (error.response.status === 401 && !originalRequest._retry) {

@@ -14,6 +14,7 @@ import Campaign from 'Views/Admin/Docs/Campaign/Campaign';
 import Campaign_detail from "Views/Admin/Docs/Campaign/Campaign_detail";
 import Campaign_candidate_details from "Views/Admin/Docs/Campaign/Campaign_candidate_details";
 import FellowshipCandidatesRegistration from "Views/Common/Docs/FellowshipCandidatesRegistration";
+import Fellowship from "Views/Admin/Docs/Fellowship";
 
 
 const App = () => {
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="invoices" element={<p>invoices</p>} />
               <Route path="notes" element={<p>notes</p>} />
               <Route path="documents" element={<p>documents</p>} />
+              <Route path="fellowship_candidates" element={<Fellowship />} />
             </Route>
           </Route>
 

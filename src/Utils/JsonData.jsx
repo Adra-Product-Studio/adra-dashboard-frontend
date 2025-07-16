@@ -92,6 +92,11 @@ const JsonData = () => {
                 icon: Icons.doocumentIcon,
                 name: "Documents",
                 route: "/dashboard/documents"
+            },
+            {
+                icon: Icons.doocumentIcon,
+                name: "Fellowship candidates",
+                route: "/dashboard/fellowship_candidates"
             }
         ],
         states: [
@@ -999,7 +1004,7 @@ const JsonData = () => {
                 divClassName: 'col-12 p-1 mt-2',
                 change: (e) => dispatch(updateFellowshipCandidatesData({ remarks: e.target.value })),
                 Err: commonState?.validated && !commonState?.fellowship_candidate_register?.remarks ? "Reason required" : null,
-                isMandatory: true
+                isMandatory: false
             }
         ]
     }
