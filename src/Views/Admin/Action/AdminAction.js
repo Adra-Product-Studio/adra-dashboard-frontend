@@ -2,7 +2,8 @@ import axiosInstance from 'Services/axiosInstance';
 import {
     update_create_campaign_data, getCampaign, postOrEditCampign, getCampaignAssignedQuestions,
     create_individual_campaign_ques_pattern, edit_individual_campaign_ques_pattern,
-    delete_individual_campaign_ques_pattern, getCampaignCandidateDetails
+    delete_individual_campaign_ques_pattern, getCampaignCandidateDetails,
+    getFellowshipCandidates
 
 
 } from 'Views/Admin/Slice/AdminSlice';
@@ -124,4 +125,32 @@ export const handleGetIndividualCampaignCandidate = (params) => async (dispatch)
     } catch (Err) {
         dispatch(getCampaignCandidateDetails({ type: "failure", message: Err?.message }))
     }
+}
+
+export const handleGetFellowshipCandidates = (params) => async (dispatch) => {
+    try {
+        dispatch(getFellowshipCandidates({ type: "request", page_number: params?.page }))
+        const { data } = await axiosInstance.get(`/fellowship_candidates?page_number=${params?.page}&limit=${params?.limit}`)
+
+        if (data?.error_code === 0) dispatch(getFellowshipCandidates({ type: "response", data: data?.data }))
+        else dispatch(getFellowshipCandidates({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(getFellowshipCandidates({ type: "failure", message: Err?.message }))
+    }
+
+}
+
+export const handleGetFellowshipCandidatesDetails = (params) => async (dispatch) => {
+    if (!params?.candidate_id) return dispatch(getFellowshipCandidates({ type: "failure", message: 'Candidate ID required' }))
+
+    try {
+        dispatch(getFellowshipCandidates({ type: "request", page_number: params?.page }))
+        const { data } = await axiosInstance.get(`/fellowship_candidates/${params?.candidate_id}`)
+
+        if (data?.error_code === 0) dispatch(getFellowshipCandidates({ type: "response", data: data?.data }))
+        else dispatch(getFellowshipCandidates({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(getFellowshipCandidates({ type: "failure", message: Err?.message }))
+    }
+
 }

@@ -13,7 +13,7 @@ const InterviewCandidatesHeader = ({
   showLogOut
 }) => {
   const navigate = useCustomNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   return (
     <header>
@@ -27,7 +27,7 @@ const InterviewCandidatesHeader = ({
                   className="cursor-pointer"
                   width="60rem"
                   height="37rem"
-                  clickFunction={logoRedirect ? ()=>navigate(logoRedirect) : null}
+                  clickFunction={logoRedirect ? () => navigate(logoRedirect) : null}
                 />
               </div>
 

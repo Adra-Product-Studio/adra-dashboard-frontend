@@ -15,6 +15,7 @@ import Campaign_detail from "Views/Admin/Docs/Campaign/Campaign_detail";
 import Campaign_candidate_details from "Views/Admin/Docs/Campaign/Campaign_candidate_details";
 import FellowshipCandidatesRegistration from "Views/Common/Docs/FellowshipCandidatesRegistration";
 import Fellowship from "Views/Admin/Docs/Fellowship";
+import FellowshipDetails from "Views/Admin/Docs/Fellowship/details";
 
 
 const App = () => {
@@ -44,14 +45,17 @@ const App = () => {
               <Route path="interview">
                 <Route index element={<Campaign />} />
                 <Route path=":campaign_id" element={<Campaign_detail />} />
-                <Route path="candidate/:campaign_id/:candidate_id" element={<Campaign_candidate_details />} />
+                <Route path=":campaign_id/:candidate_id" element={<Campaign_candidate_details />} />
               </Route>
 
               <Route path="circular" element={<p>circular</p>} />
               <Route path="invoices" element={<p>invoices</p>} />
               <Route path="notes" element={<p>notes</p>} />
               <Route path="documents" element={<p>documents</p>} />
-              <Route path="fellowship_candidates" element={<Fellowship />} />
+              <Route path="fellowship_candidates" >
+                <Route index element={<Fellowship />} />
+                <Route path=":fellowship_candidate_id" element={<FellowshipDetails />} />
+              </Route>
             </Route>
           </Route>
 

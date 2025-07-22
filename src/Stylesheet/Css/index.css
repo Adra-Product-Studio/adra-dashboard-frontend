@@ -15,7 +15,12 @@
 }
 
 .registration-form-height::-webkit-scrollbar {
-  width: 0;
+  width: .3rem;
+}
+
+.card_content_height {
+  height: calc(var(--root-height) - var(--header-height) - 2rem);
+  overflow-y: auto;
 }
 
 .modal-90w {
@@ -38,7 +43,7 @@
 }
 
 .cursor-pointer {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .spinner-border {
@@ -270,8 +275,6 @@
 }
 
 
-
-
 /* ----------------------------------------------------
     404 Area
 ---------------------------------------------------- */
@@ -476,6 +479,43 @@
 }
 
 .card,
-.card-header{
+.card-header {
   border: 1px solid #80808026;
-} 
+}
+
+.fellowship_candidate_image {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+
+/* pagination */
+.page-link:focus {
+  box-shadow: none !important;
+}
+
+.pagination>li>a {
+  background-color: white;
+  color: #4b4640;
+}
+
+.page-item.disabled .page-link {
+  background-color: transparent !important;
+}
+
+.pagination>.active>a {
+  color: white;
+  background-color: #4b4640 !important;
+  border: solid 1px transparent;
+}
+
+.pagination>.active>a:hover {
+  background-color: #4b4640 !important;
+  border: solid 1px transparent !important;
+}
+
+.page-item.active .page-link {
+  border-color: transparent !important;
+}

@@ -75,7 +75,8 @@ input::-webkit-inner-spin-button {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 12px;
-  background: #aaa;
+  background: black;
+  cursor: pointer;
 }
 
 .is-invalid {

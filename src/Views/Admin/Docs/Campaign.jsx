@@ -38,14 +38,14 @@ const Campaign = () => {
                     {
                         adminState?.campaign_placeholder ?
                             Array.from({ length: 6 }, (_, i) => (
-                                <div className="col-12 col-md-6 col-lg-4 col-xxl-3 p-1 ">
+                                <div className="col-12 col-md-6 col-lg-4 p-1 ">
                                     <CampaignCard cardClassName="w-100" placeholder={true} />
                                 </div>
                             ))
                             :
                             adminState?.campaigns_data?.campaignCount ?
                                 adminState?.campaigns_data?.campaign?.map((campaign, index) => (
-                                    <div className="col-12 col-md-6 col-lg-4 col-xxl-3 p-1 " key={index}>
+                                    <div className="col-12 col-md-6 col-lg-4 p-1 " key={index}>
                                         <CampaignCard cardClassName="w-100" campaign={campaign} />
                                     </div>
                                 ))
@@ -58,7 +58,6 @@ const Campaign = () => {
                                     </div>
                                 </div>
                     }
-
                 </div>
             </div>
         </Fragment>

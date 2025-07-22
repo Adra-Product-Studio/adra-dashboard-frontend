@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails } from "Views/Admin/Slice/AdminSlice";
+import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails, getFellowshipCandidates } from "Views/Admin/Slice/AdminSlice";
 import {
     getQuestionsFailure,
     getRegistrationRoles,
@@ -344,6 +344,18 @@ const commonSlice = createSlice({
                 },
                 setErrorState
             )
+
+            .addMatcher(
+                function (action) {
+                    return [
+                        getFellowshipCandidates.toString(), 
+                    ].includes(action.type)
+                },
+                (state, action) => {
+                    if (action?.payload?.type === "failure") setErrorState(state, action);
+                }
+            )
+            
 
             .addMatcher(
                 function (action) {

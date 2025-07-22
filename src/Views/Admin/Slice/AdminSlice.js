@@ -8,6 +8,7 @@ const initialState = {
     create_assigning_questions: {},
     campaign_placeholder: false,
     create_update_campaign_spinner: false,
+    fellowship_candidates: []
 };
 
 const AdminSlice = createSlice({
@@ -222,6 +223,32 @@ const AdminSlice = createSlice({
                     break;
             }
         },
+
+        // Get Fellowship candidate details
+        getFellowshipCandidates(state, action) {
+            const { type, data, page_number } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.placeholderGlow = true;
+                    state.page_number = page_number || 1;
+                    state.fellowship_candidates = {};
+                    break;
+
+                case "response":
+                    state.placeholderGlow = false;
+                    state.fellowship_candidates = data || {};
+                    break;
+
+                case "failure":
+                    state.placeholderGlow = false;
+                    state.fellowship_candidates = null;
+                    break;
+
+                default:
+                    break;
+            }
+        },
     }
 });
 
@@ -229,7 +256,7 @@ export const {
     update_create_campaign_data, getCampaign, postOrEditCampign,
     getCampaignAssignedQuestions, assignQuestionTypes, create_individual_campaign_ques_pattern,
     edit_campaign_data, edit_individual_campaign_ques_pattern, delete_individual_campaign_ques_pattern,
-    getCampaignCandidateDetails
+    getCampaignCandidateDetails, getFellowshipCandidates
 
 
 } = AdminSlice.actions;
