@@ -13,27 +13,23 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (process.env.REACT_APP_ENVIRONMENT === "production") {
-      return { ...response, data: aesDecrypt(response.data) };
-    }
-    else {
-      return response;
-    }
+    if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...response, data: aesDecrypt(response.data) };
+    else return response;
   },
   async (error) => {
-    if (process.env.REACT_APP_ENVIRONMENT === "production") console.log("Error:", aesDecrypt(error.response.data))
-    else console.log("Error:", error.response.data)
+    let errorData = error || {};
+    if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...errorData, response: { ...errorData.response, data: aesDecrypt(errorData.response.data) } };
 
     try {
-      const originalRequest = error.config;
-      if (error.response.status === 401 && !originalRequest._retry) {
+      const originalRequest = errorData.config;
+      if (errorData.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        if (error.response.data.message === "Token expired") {
+        if (errorData.response.data.message === "Token expired") {
           await store.dispatch(handlerefreshToken());
           return axiosInstance(originalRequest);
         }
       } else {
-        return Promise.reject(error?.response?.data || {});
+        return Promise.reject(errorData?.response?.data || {});
       }
     } catch (err) {
       return Promise.reject(err);
