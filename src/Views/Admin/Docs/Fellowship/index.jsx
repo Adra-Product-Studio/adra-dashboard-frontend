@@ -27,14 +27,14 @@ export default function Fellowship() {
                         </div>
                         :
                         adminState?.fellowship_candidates?.candidates?.length ?
-                            <>
+                            <div className="row">
                                 <p>Showing {adminState?.fellowship_candidates?.candidates?.length} - {adminState?.fellowship_candidates?.totalCount} Candidates</p>
                                 {adminState?.fellowship_candidates?.candidates?.map((candidate, index) => (
                                     <div className="col-12 col-md-6 col-xxl-4 p-1" key={index}>
                                         <FellowshipCandidateCard cardClassName="h-100" params={candidate} />
                                     </div>
                                 ))}
-                            </>
+                            </div>
                             :
                             <div className="h-100 row align-items-center justify-content-center text-center">
                                 <h6>No Fellowship Candidates Found</h6>

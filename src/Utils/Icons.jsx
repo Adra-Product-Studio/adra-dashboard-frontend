@@ -1,11 +1,18 @@
 import { RiErrorWarningLine } from "react-icons/ri";
 import { LiaIdCard } from "react-icons/lia";
 import { MdOutlineEdit, MdOutlineDelete } from "react-icons/md";
+import { CiMail } from "react-icons/ci";
+import { SlLocationPin } from "react-icons/sl";
+import { TbPhone } from "react-icons/tb";
+import { PiGraduationCapDuotone } from "react-icons/pi";
 
 const closeTestIcon = <RiErrorWarningLine className="fs-1" />
-const editIcon = <MdOutlineEdit size={22} className="text-primary"/>
-const deleteIcon = <MdOutlineDelete size={22} className="text-danger"/>
-
+const editIcon = <MdOutlineEdit size={22} className="text-primary" />
+const deleteIcon = <MdOutlineDelete size={22} className="text-danger" />
+const mailIcon = <CiMail size={20} />
+const locationIcon = <SlLocationPin size={20} />
+const phoneIcon = <TbPhone size={20} />
+const qualificationIcon = <PiGraduationCapDuotone size={20} />
 
 const interviewRoundNonActiveIcon = <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
     <circle cx="15" cy="15" r="15" fill="#303030" />
@@ -113,7 +120,7 @@ const Icons = {
     circularIcon, invoicesIcon, notesIcon, doocumentIcon,
     profileDefautUserIcon, notificationIcon, menuIcon,
     campaign_calender_icon, campaign_total_candidate_icon, campaign_confirm_candidate_icon,
-    editIcon, deleteIcon
+    editIcon, deleteIcon, mailIcon, locationIcon, phoneIcon, qualificationIcon
 }
 
 export default Icons

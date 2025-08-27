@@ -29,8 +29,8 @@ const CampaignCard = ({
     ]
 
     return (
-        <Card className='border rounded-4 h-100'>
-            <Card.Header className='bg-transparent py-3'>
+        <Card className='border-0 shadow-sm rounded-4 h-100'>
+            <Card.Header className='bg-transparent py-3 border-0 border-bottom'>
                 <h6 className={placeholder ? "placeholder w-75 py-3 rounded" : ''}>{campaign?.job_title || ''}</h6>
                 <p className={placeholder ? "placeholder w-50 py-3 rounded mb-0" : 'mb-0 text-secondary fs-13'}>
                     Posted on :

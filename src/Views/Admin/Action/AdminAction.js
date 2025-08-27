@@ -3,7 +3,8 @@ import {
     update_create_campaign_data, getCampaign, postOrEditCampign, getCampaignAssignedQuestions,
     create_individual_campaign_ques_pattern, edit_individual_campaign_ques_pattern,
     delete_individual_campaign_ques_pattern, getCampaignCandidateDetails,
-    getFellowshipCandidates
+    getFellowshipCandidates,
+    getSampleTest
 
 
 } from 'Views/Admin/Slice/AdminSlice';
@@ -51,6 +52,20 @@ export const handleGetIndividualCampaign = (params) => async (dispatch) => {
         else dispatch(getCampaign({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(getCampaign({ type: "failure", message: Err?.message }))
+    }
+}
+
+
+// Get sample test
+export const handleGetSampleTest= (params) => async (dispatch) => {
+    try {
+        dispatch(getSampleTest({ type: "request" }))
+        const { data } = await axiosInstance.get(`/campaign/${params?.campaign_id}/generate_sample_test`)
+
+        if (data?.error_code === 0) dispatch(getSampleTest({ type: "response", data: data?.data }))
+        else dispatch(getSampleTest({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(getSampleTest({ type: "failure", message: Err?.message }))
     }
 }
 

@@ -1,7 +1,8 @@
-import ButtonComponent from 'Components/Button/Button';
 import Img from 'Components/Img/Img'
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap'
+import { PiClockCountdown } from "react-icons/pi";
+import Icons from 'Utils/Icons';
 
 const CampaignCandidatesCard = ({
     data, clickFunction,
@@ -12,13 +13,20 @@ const CampaignCandidatesCard = ({
 
     function apti_status(status) {
         if (status === "Test Completed") {
-            return <span className='text-success ps-2'>Test Completed</span>
+            return <span className='text-success'>Test Completed</span>
         } else if (status === "Not Started") {
-            return <span className='text-danger ps-2'>Not Started</span>
+            return <span className='text-danger'>Not Started</span>
         } else if (status === "Test Started") {
-            return <span className='text-warning ps-2'>Test Started</span>
+            return <span className='text-warning'>Test Started</span>
         }
     }
+
+    function apti_status_colors(status) {
+        if (status === "Test Completed") return 'test_completed_badge';
+        else if (status === "Not Started") return 'test_not_started_badge';
+        else if (status === "Test Started") return 'test_progress_badge';
+    }
+
 
     useEffect(() => {
         const calculateTimeLeft = () => {
@@ -47,101 +55,153 @@ const CampaignCandidatesCard = ({
     }, [data?.test_EndedOn]);
 
     return (
-        <Card className={`bg-transparent rounded-4 h-100 ${card_className || ''}`}>
+        <Card className={`bg-white shadow-sm border-0 rounded-4 h-100 position-relative ${card_className || ''}`} onClick={!detail_view ? clickFunction : null}>
+            <div className={`interview_candidate_badge ${apti_status_colors(data?.status || '')}`}>
+                {apti_status(data?.status || '')}
+            </div>
             <Card.Body className='pb-0'>
-                <div className={`row align-items-center border-bottom pb-3`}>
-                    <div className="col-3">
-                        <Img src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" alt="candidate image" width="80rem" height="80rem" className="rounded-circle" />
-                    </div>
-                    <div className="col-9">
-                        <h6><b>Name:</b> <span className='ps-2'>{data?.name || ''}</span></h6>
-                        {
-                            detail_view ?
-                                <p className='mb-1'><b>Age:</b> <span className='ps-2'>{data?.age || ''}</span></p>
-                                :
-                                null
-                        }
-                        <p className='mb-1'><b>Gender:</b> <span className='ps-2'>{data?.gender || ''}</span></p>
-                    </div>
-                </div>
-                {
-                    detail_view ?
-                        <div className="py-3 border-bottom">
-                            <h6>Test Score</h6>
-                            {
-                                Object.entries(data?.test_score || {}).map(([key, value]) => (
-                                    <p key={key}>{key}: {value}</p>
-                                ))
-                            }
+                <div className='row align-items-center border-bottom'>
+                    <div className="col-12 text-center mt-3">
+                        <Img src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" alt="candidate image" width="80rem" height="80rem" className="rounded-3" />
+                        <h6>
+                            <span className='border-end pe-2'>{data?.name || ''}</span>
+                            {data?.experience && <span className='ps-2'>{data?.experience || ''}</span>}
+                        </h6>
 
-                            <p className='mb-1'><b>Aptitude status:</b>{apti_status(data?.status || '')}</p>
-                            {data?.test_EndedOn && data?.status !== "Test Completed" ?
-                                <p className='mb-1'><b>Time remaining:</b> <span className='ps-2'>{timeLeft}</span></p>
-                                :
-                                null
-                            }
-                        </div>
-                        :
-                        null
-                }
-                <div className="pt-3">
-                    <p className='mb-1'><b>Email:</b><span className='ps-2'>{data?.email || ''}</span></p>
-                    <p className='mb-1'><b>phone number:</b><span className='ps-2'>{data?.phoneNumber || ''}</span></p>
-                    <p className='mb-1'><b>Qualification:</b><span className='ps-2'>{data?.candidateQualification || ''}</span></p>
-                    <p className='mb-1'><b>Experience:</b><span className='ps-2'>{data?.experience || ''}</span></p>
-                    <p className='mb-1'><b>Address:</b><span className='ps-2'>{data?.address || ''}</span></p>
-                    <p className='mb-1'><b>Current salary:</b><span className='ps-2'>{data?.currentSalary || ''}</span></p>
-                    <p className='mb-1'><b>Expected salary:</b><span className='ps-2'>{data?.expectedSalary || ''}</span></p>
-                    {
-                        !detail_view ?
-                            <Fragment>
-                                <p className='mb-1'><b>Aptitude status:</b>{apti_status(data?.status || '')}</p>
-                                {data?.test_EndedOn && data?.status !== "Test Completed" ?
-                                    <p className='mb-1'><b>Time remaining:</b> <span className='ps-2'>{timeLeft}</span></p>
-                                    :
-                                    null
-                                }
-                            </Fragment>
+                        <p>
+                            {data?.gender && <span className='border-end pe-2'>{data?.gender || ''}</span>}
+                            {data?.age && <span className='ps-2'>{data?.age || ''}</span>}
+                        </p>
+
+                        {data?.test_EndedOn && !timeLeft ?
+                            <p>
+                                <PiClockCountdown size={22} />
+                                <span className='ps-2'>{timeLeft}</span>
+                            </p>
                             :
                             null
-                    }
+                        }
+                        <p>Test Score: {data?.test_score ? Object.values(data?.test_score || {}).reduce((sum, val) => sum + val, 0) : 0}</p>
+                    </div>
                 </div>
-                {
-                    detail_view ?
-                        <div className="border-bottom">
-                            <p className='mb-1'><b>parent occupation:</b><span className='ps-2'>{data?.parentOccupation || ''}</span></p>
 
-                            <p className='mb-1'><b>School name (SSLC):</b><span className='ps-2'>{data?.sslcSchoolName || ''}</span></p>
-                            <p className='mb-1'><b>Sslc Marks:</b><span className='ps-2'>{data?.sslcMarks || ''}</span></p>
-
-                            <p className='mb-1'><b>School name (HSC):</b><span className='ps-2'>{data?.hscSchoolName || ''}</span></p>
-                            <p className='mb-1'><b>Hsc Marks:</b><span className='ps-2'>{data?.hscMarks || ''}</span></p>
-
-                            <p className='mb-1'><b>college name:</b><span className='ps-2'>{data?.collegeName || ''}</span></p>
-                            <p className='mb-1'><b>college Marks:</b><span className='ps-2'>{data?.collegeMarks || ''}</span></p>
-
-                            <p className='mb-1'><b>Experience:</b><span className='ps-2'>{data?.experience || ''}</span></p>
-                            <p className='mb-1'><b>Address:</b><span className='ps-2'>{data?.address || ''}</span></p>
-                            <p className='mb-1'><b>Current salary:</b><span className='ps-2'>{data?.currentSalary || ''}</span></p>
-                            <p className='mb-1'><b>Expected salary:</b><span className='ps-2'>{data?.expectedSalary || ''}</span></p>
-                        </div>
-                        :
-                        null
+                {detail_view &&
+                    <div className='py-3 border-bottom'>
+                        <h5>Marks scored</h5>
+                        <ul className='m-0'>
+                            {Object.entries(data?.test_score || {}).map(([key, value], index) => (
+                                <li key={index}>{key}: {value}</li>
+                            ))}
+                        </ul>
+                    </div>
                 }
+
+                <div className="pt-3">
+                    <table className='table table-borderless m-0'>
+                        <tbody>
+                            <tr>
+                                <td className='col-1'>
+                                    {Icons.mailIcon}
+                                </td>
+                                <td className='text-break'>{data?.email || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.locationIcon}
+                                </td>
+                                <td className='text-break'>{data?.address || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.phoneIcon}
+                                </td>
+                                <td className='text-break'>{data?.phoneNumber || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.qualificationIcon}
+                                </td>
+                                <td className='text-break'>{data?.candidateQualification || ''}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </Card.Body>
-            {
-                !detail_view ?
-                    <Card.Footer className='border-0 bg-transparent pt-0 text-end'>
-                        <ButtonComponent
-                            type="button"
-                            className="text-secondary"
-                            buttonName="View details..."
-                            clickFunction={clickFunction}
-                        />
-                    </Card.Footer>
-                    :
-                    null
-            }
+
+            <Card.Footer className='border-0 bg-transparent'>
+                {!detail_view && (
+                    <table className={`table table-borderless m-0 ${detail_view ? 'border-top' : ''}`}>
+                        <tbody className='text-center'>
+                            <tr>
+                                <th className='border-end'>Current salary</th>
+                                <th>Expected salary</th>
+                            </tr>
+                            <tr>
+                                <td className='border-end'>{data?.currentSalary || ''}</td>
+                                <td>{data?.expectedSalary || ''}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                )}
+
+                {detail_view && (
+                    <div className="border-top py-3">
+                        <table className="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th>Current salary</th>
+                                    <td>{data?.currentSalary || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>Expected salary</th>
+                                    <td>{data?.expectedSalary || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>Marital status</th>
+                                    <td>{data?.maritalStatus || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Experience</th>
+                                    <td>{data?.canditateExpType || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>Previous Company Name</th>
+                                    <td>{data?.previousCompanyName || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>Parent Occupation</th>
+                                    <td>{data?.parentOccupation || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>School (SSLC)</th>
+                                    <td>{data?.sslcSchoolName || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>SSLC Marks</th>
+                                    <td>{data?.sslcMarks || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>School (HSC)</th>
+                                    <td>{data?.hscSchoolName || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>HSC Marks</th>
+                                    <td>{data?.hscMarks || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>College Name</th>
+                                    <td>{data?.collegeName || "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th>College Marks</th>
+                                    <td>{data?.collegeMarks || "-"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+            </Card.Footer>
         </Card >
     )
 }

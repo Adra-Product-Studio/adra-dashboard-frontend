@@ -16,6 +16,7 @@ import Campaign_candidate_details from "Views/Admin/Docs/Campaign/Campaign_candi
 import FellowshipCandidatesRegistration from "Views/Common/Docs/FellowshipCandidatesRegistration";
 import Fellowship from "Views/Admin/Docs/Fellowship";
 import FellowshipDetails from "Views/Admin/Docs/Fellowship/details";
+import Sample_test from "Views/Admin/Docs/Campaign/Sample_test";
 
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="interview">
                 <Route index element={<Campaign />} />
                 <Route path=":campaign_id" element={<Campaign_detail />} />
+                <Route path=":campaign_id/generate_sample_test" element={<Sample_test />} />
                 <Route path=":campaign_id/:candidate_id" element={<Campaign_candidate_details />} />
               </Route>
 

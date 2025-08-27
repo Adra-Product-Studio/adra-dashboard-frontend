@@ -519,3 +519,29 @@
 .page-item.active .page-link {
   border-color: transparent !important;
 }
+
+.test_completed_badge {
+  background-color: #e4f7e6;
+  color: #1f662c;
+}
+
+.test_progress_badge {
+  background-color: #fff9d6;
+  color: #8b7e19;
+}
+
+.test_not_started_badge {
+   background-color: #ffe6e6;
+  color: #ff0000;
+}
+
+.interview_candidate_badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 0 12px 0 0;
+  width: 10rem;
+  font-size: 12px;
+  padding: .4rem;
+  text-align: center;
+}

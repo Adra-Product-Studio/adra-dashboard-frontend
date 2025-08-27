@@ -27,6 +27,9 @@ const Campaign_detail = () => {
                 <div className="flex-grow-1 text-end">
                     <div className="w-100 h-100 d-flex justify-content-end align-items-center">
                         <div className="px-2">
+                            <ButtonComponent type="button" buttonName="Generate Sample Test" className="btn btn-outline-dark" clickFunction={() => navigate(`/dashboard/interview/${campaign_id}/generate_sample_test`)} btnDisable={!adminState?.campaigns_data?.question_pattern?.length} />
+                        </div>
+                        <div className="px-2">
                             <ButtonComponent type="button" buttonName="Generate Questions" className="btn btn-outline-dark" clickFunction={() => dispatch(handleGetQuestionTypes())} />
                         </div>
                     </div>
@@ -44,7 +47,7 @@ const Campaign_detail = () => {
                     adminState?.campaigns_data?.candidates?.length ?
                         <div className="row py-3">
                             {adminState?.campaigns_data?.candidates?.map((item, index) => (
-                                <div className='col-12 col-md-6 col-lg-4 col-xl-3 p-1' key={index}>
+                                <div className='col-12 col-md-6 col-lg-4 col-xl-3 p-2' key={index}>
                                     <CampaignCandidatesCard data={item} clickFunction={() => navigate(`/dashboard/interview/${campaign_id}/${item?.candidate_id}`)} />
                                 </div>
                             ))}
