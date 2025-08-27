@@ -54,6 +54,37 @@ const CampaignCandidatesCard = ({
         return () => clearInterval(timer);
     }, [data?.test_EndedOn]);
 
+    function test_score(score) {
+        if (!score) return "0 / 0";
+
+        const { scored } = Object.values(score).reduce(
+            (acc, val) => {
+                if (typeof val === "string") {
+                    // case: "6 out of 15"
+                    const match = val.match(/(\d+)\s*out of\s*(\d+)/i);
+                    if (match) {
+                        const [_, s, t] = match.map(Number);
+                        return {
+                            scored: acc.scored + (s || 0),
+                            total: acc.total + (t || 0),
+                        };
+                    }
+                }
+                else if (typeof val === "number") {
+                    // case: number only (unknown total)
+                    return {
+                        scored: acc.scored + val,
+                        total: acc.total,
+                    };
+                }
+                return acc;
+            },
+            { scored: 0, total: 0 }
+        );
+
+        return scored;
+    }
+
     return (
         <Card className={`bg-white shadow-sm border-0 rounded-4 h-100 position-relative ${card_className || ''}`} onClick={!detail_view ? clickFunction : null}>
             <div className={`interview_candidate_badge ${apti_status_colors(data?.status || '')}`}>
@@ -73,7 +104,7 @@ const CampaignCandidatesCard = ({
                             {data?.age && <span className='ps-2'>{data?.age || ''}</span>}
                         </p>
 
-                        {data?.test_EndedOn && !timeLeft ?
+                        {data?.test_EndedOn && timeLeft !== "Test time is over" ?
                             <p>
                                 <PiClockCountdown size={22} />
                                 <span className='ps-2'>{timeLeft}</span>
@@ -81,11 +112,17 @@ const CampaignCandidatesCard = ({
                             :
                             null
                         }
-                        <p>Test Score: {data?.test_score ? Object.values(data?.test_score || {}).reduce((sum, val) => sum + val, 0) : 0}</p>
+                        {timeLeft === "Test time is over" ? (
+                            <p>
+                                Test Score:{" "}
+                                {test_score(data?.test_score)}
+                            </p>
+                        ) : null}
+
                     </div>
                 </div>
 
-                {detail_view &&
+                {detail_view && data?.test_score &&
                     <div className='py-3 border-bottom'>
                         <h5>Marks scored</h5>
                         <ul className='m-0'>
