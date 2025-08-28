@@ -104,7 +104,7 @@ const CampaignCandidatesCard = ({
                             {data?.age && <span className='ps-2'>{data?.age || ''}</span>}
                         </p>
 
-                        {data?.test_EndedOn && timeLeft !== "Test time is over" ?
+                        {data?.status !== "Test Completed" && timeLeft !== "Test time is over" ?
                             <p>
                                 <PiClockCountdown size={22} />
                                 <span className='ps-2'>{timeLeft}</span>
@@ -112,7 +112,7 @@ const CampaignCandidatesCard = ({
                             :
                             null
                         }
-                        {timeLeft === "Test time is over" ? (
+                        {timeLeft === "Test time is over" || data?.status === "Test Completed" ? (
                             <p>
                                 Test Score:{" "}
                                 {test_score(data?.test_score)}
