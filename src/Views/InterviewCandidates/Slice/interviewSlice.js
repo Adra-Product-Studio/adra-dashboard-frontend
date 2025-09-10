@@ -22,22 +22,26 @@ const interviewSlice = createSlice({
             const [key, value] = Object.entries(action.payload)[0];
             state.candidateData[key] = value;
 
-            switch (key) {
-                case "maritalStatus":
-                    state.candidateData.childrens = "";
-                    break;
+            Object.entries(action.payload)?.map(([keys, value]) => {
+                switch (key) {
+                    case "maritalStatus":
+                        state.candidateData.childrens = "";
+                        break;
 
-                case "experience":
-                    state.candidateData.previousCompanyName = "";
-                    state.candidateData.designation = "";
-                    state.candidateData.canditateExpType = "";
-                    break;
+                    case "experience":
+                        state.candidateData.previousCompanyName = "";
+                        state.candidateData.designation = "";
+                        state.candidateData.canditateExpType = "";
+                        break;
 
-                case "canditateRole":
-                    const campaign_data = state?.registration_roles?.find(item => item?.job_title === value);
-                    state.candidateData.campaign_id = campaign_data?._id || "";
-                    break;
-            }
+                    case "canditateRole":
+                        const campaign_data = state?.registration_roles?.find(item => item?.job_title === value);
+                        state.candidateData.campaign_id = campaign_data?._id || "";
+                        break;
+                }
+
+                state.candidateData[keys] = value;
+            })
         },
         getQuestionFromDb(state, action) {
             const answeredQues = action.payload?.filter((v) => v?.candidate_answer !== '')
@@ -75,7 +79,7 @@ const interviewSlice = createSlice({
         getQuestionsRequest(state, action) {
             return {
                 ...state,
-                initialGlow: true
+                start_test_spinner: true
             }
         },
         getQuestionsResponse(state, action) {
@@ -103,13 +107,13 @@ const interviewSlice = createSlice({
                 generatedQuestions: action?.payload?.assigned_questions || [],
                 test_end_timeStamp: action?.payload?.test_EndedOn || null,
                 isDataPresentInIndexedDb: action?.payload?.assigned_questions ? true : false,
-                initialGlow: false
+                start_test_spinner: false
             }
         },
         getQuestionsFailure(state, action) {
             return {
                 ...state,
-                initialGlow: false
+                start_test_spinner: false
             }
         },
 

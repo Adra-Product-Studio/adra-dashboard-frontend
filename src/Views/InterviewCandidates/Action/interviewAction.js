@@ -1,6 +1,6 @@
 import axiosInstance from "Services/axiosInstance";
 import { handleValidation } from "Views/Common/Action/Common_action";
-import { closeTestMode } from "Views/Common/Slice/Common_slice";
+import { closeTestMode, malpracticeTestClose, updateMalpracticeData, updateToast } from "Views/Common/Slice/Common_slice";
 import {
     updateCandidateData,
     registerCandidateRequest,
@@ -21,6 +21,7 @@ import {
 } from "Views/InterviewCandidates/Slice/interviewSlice";
 import { IndexedDbDeleteFun } from "Views/InterviewCandidates/IndexedDbDeleteFun";
 import { initializeDB } from "ResuableFunctions/CustomHooks";
+import { exitFullScreen, handleFullScreen } from "ResuableFunctions/fullscreenmode";
 
 //                                                                 candidate registration on change 
 export const handleInterviewRegistrationOnChange = ipVal => dispatch => {
@@ -40,34 +41,35 @@ export const handleGetRegistrationRoles = () => async (dispatch) => {
     }
 }
 
-export const handleRegisterCandidate = params => async (dispatch) => {
-    if (params?.candidateData?.name && params?.candidateData?.age && params?.candidateData?.phoneNumber && params?.candidateData?.email &&
-        params?.candidateData?.gender && params?.candidateData?.address && params?.candidateData?.parentName && params?.candidateData?.parentOccupation &&
-        params?.candidateData?.maritalStatus && params?.candidateData?.siblings && params?.candidateData?.addressIfAnyCbe && params?.candidateData?.sslcSchoolName &&
-        params?.candidateData?.sslcMarks && params?.candidateData?.hscSchoolName && params?.candidateData?.hscMarks && params?.candidateData?.collegeName &&
-        params?.candidateData?.collegeMarks && params?.candidateData?.experience && params?.candidateData?.canditateRole && params?.candidateData?.expectedSalary &&
-        params?.candidateData?.currentSalary) {
+export const handleRegisterCandidate = ({ candidateRegistration, input_data }, navigate) => async (dispatch) => {
+    const fd = new FormData();
+    let params = Object.assign({}, input_data);
+    if ('image_show_ui' in params) delete params['image_show_ui'];
 
-        if (params?.candidateData?.maritalStatus === "Married" || params?.candidateData?.experience === "experienced") {
-            if (params?.candidateData?.maritalStatus === "Married" && !params?.candidateData?.childrens) return dispatch(handleValidation)
-            if (params?.candidateData?.experience === "experienced" && !params?.candidateData?.previousCompanyName && !params?.candidateData?.designation && !params?.candidateData?.canditateExpType) return dispatch(handleValidation)
-            dispatch(registerCandidateCall(params?.candidateData))
-        }
-        else dispatch(registerCandidateCall(params?.candidateData))
-    } else {
+
+    const findNullEmptyValues = candidateRegistration
+        .filter((items) => items?.isMandatory)
+        .map((items) => items?.value)
+        .some((value) => value === "" || (Array.isArray(value) && value.length === 0));
+
+    if (findNullEmptyValues) {
         dispatch(handleValidation)
+        return dispatch(updateToast({ message: "Please fill all the fields", type: "error" }));
     }
-}
 
-const registerCandidateCall = params => async (dispatch) => {
+    Object.keys(params).forEach((key) => {
+        if (key === 'image') fd.append(key, params[key][0]);
+        else fd.append(key, params[key]);
+    })
 
     try {
         dispatch(registerCandidateRequest())
-        const { data } = await axiosInstance.post("/register_candidate", params)
+        const { data } = await axiosInstance.post("/register_candidate", fd)
 
         if (data?.error_code === 0) {
             dispatch(registerCandidateResponse(data?.data))
             IndexedDbDeleteFun();
+            navigate("/")
         }
         else dispatch(registerCandidateFailure(data?.message))
 
@@ -78,6 +80,7 @@ const registerCandidateCall = params => async (dispatch) => {
 
 //                                                                   get generated questions                                                                       
 export const handleGetQuestions = async (dispatch) => {
+    handleFullScreen();
     try {
         dispatch(getQuestionsRequest())
         const { data } = await axiosInstance.get("/generate_random_question")
@@ -144,18 +147,25 @@ export const handleCloseTestAndNavigate = dispatch => {
     dispatch(closeTestMode());
 }
 
-export const handleCloseTestAutomatic = candidate_answers => async dispatch => {
-    dispatch(updateTimeOverCloseTest())
+export const handleCloseTestAutomatic = (params) => async dispatch => {
+    if (params?.close === 'malpractice') {
+        exitFullScreen()
+        dispatch(malpracticeTestClose())
+    }
+    else dispatch(updateTimeOverCloseTest())
+
     try {
         let sendCandidateAnswers = []
-        for (let i = 0; i < candidate_answers?.length; i++) {
-            sendCandidateAnswers[sendCandidateAnswers?.length] = { _id: candidate_answers[i]?._id, candidate_answer: candidate_answers[i]?.candidate_answer }
+        for (let i = 0; i < params?.candidate_answers?.length; i++) {
+            sendCandidateAnswers[sendCandidateAnswers?.length] = { _id: params.candidate_answers[i]?._id, candidate_answer: params.candidate_answers[i]?.candidate_answer }
         }
 
+        let send_params = { close: params?.close || '', candidate_answers: sendCandidateAnswers }
         dispatch(submitTestRequest())
-        const { data } = await axiosInstance.post("/validate_answers", sendCandidateAnswers)
+        const { data } = await axiosInstance.post("/validate_answers", send_params)
         if (data?.error_code === 0) {
-            dispatch(submitTestResponse())
+            if (params?.close !== 'malpractice') dispatch(submitTestResponse())
+
             IndexedDbDeleteFun();
         } else dispatch(submitTestFailure(data?.message))
     }
@@ -185,5 +195,16 @@ export const handleCloseTestEndpoint = candidate_answers => async dispatch => {
     }
     catch (Err) {
         dispatch(submitTestFailure(Err?.message))
+    }
+}
+
+export const handleUpdateMalpractice = (params) => async (dispatch) => {
+    try {
+        const { data } = await axiosInstance.post("/update_involving_in_malpractice", { remaining_switching_count: params })
+        if (data?.error_code === 0) {
+            dispatch(updateMalpracticeData({ remaining_switching_count: data?.data?.involved_in_tab_switching }))
+        }
+    } catch (err) {
+        console.error(err);
     }
 }

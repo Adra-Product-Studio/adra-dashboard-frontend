@@ -35,7 +35,8 @@
 }
 
 .overflowY {
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .main_rendering_contents-footer_height {
@@ -544,4 +545,8 @@
   font-size: 12px;
   padding: .4rem;
   text-align: center;
+}
+
+.instructions_height{
+  height: 35rem;
 }

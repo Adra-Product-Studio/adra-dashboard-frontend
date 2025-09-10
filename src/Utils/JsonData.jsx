@@ -234,6 +234,37 @@ const JsonData = () => {
                 isMandatory: true
             },
             {
+                name: "Candidate Recent photo",
+                type: "file",
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
+                accept: "image/jpeg,image/jpg,image/png",
+                value: interviewState?.candidateData?.image_show_ui || [],
+                change: (e) => {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    const files = Array.from(e.target.files);
+
+                    const validFiles = files.filter(file => allowedTypes.includes(file.type));
+                    if (validFiles.length === 0) return dispatch(updateToast({ type: "error", message: "Please upload valid image files (jpg, jpeg, png)" }));
+
+                    Promise.all(validFiles.map((file) => readFile(file)))
+                        .then((results) => {
+                            dispatch(handleInterviewRegistrationOnChange({
+                                image_show_ui: results,
+                                image: validFiles,
+                            }));
+                        })
+                        .catch((error) => console.error('Error reading files:', error));
+                },
+                deleteImg: (e) => {
+                    let remove_image = interviewState?.candidateData?.image_show_ui.filter((item) => item?.id !== e);
+                    dispatch(handleInterviewRegistrationOnChange({ image_show_ui: remove_image, image: {} }));
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !interviewState?.candidateData?.image_show_ui?.length ? "Recent photo required" : null
+            },
+            {
                 name: "Address",
                 type: "textbox",
                 category: "textbox",
@@ -292,12 +323,8 @@ const JsonData = () => {
                 placeholder: "",
                 value: interviewState?.candidateData?.childrens || '',
                 divClassName: `col-12 col-md-6 col-lg-4 p-1 mt-2 ${interviewState?.candidateData?.maritalStatus ? interviewState?.candidateData?.maritalStatus === "Married" ? "" : "d-none" : "d-none"}`,
-                change: (e) => {
-                    // if (/^\d*$/.test(e.target.value)) {
-                    dispatch(handleInterviewRegistrationOnChange({ childrens: e.target.value }))
-                    // }
-                },
-                isMandatory: true,
+                change: (e) => dispatch(handleInterviewRegistrationOnChange({ childrens: e.target.value })),
+                isMandatory: interviewState?.candidateData?.maritalStatus === "Married" ? true : false,
                 Err: commonState?.validated && !interviewState?.candidateData?.childrens ? "Childrens required" : null
             },
             {
@@ -483,7 +510,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.previousCompanyName || '',
                 divClassName: `col-12 col-md-8 col-lg-4 p-1 mt-2 ${interviewState?.candidateData?.experience !== "experienced" ? "d-none" : ""}`,
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ previousCompanyName: e.target.value })),
-                isMandatory: true,
+                isMandatory: interviewState?.candidateData?.experience === "experienced" ? true : false,
                 Err: commonState?.validated && !interviewState?.candidateData?.previousCompanyName ? "Organization name required" : null
             },
             {
@@ -494,7 +521,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.designation || '',
                 divClassName: `col-12 col-md-8 col-lg-4 p-1 mt-2 ${interviewState?.candidateData?.experience !== "experienced" ? "d-none" : ""}`,
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ designation: e.target.value })),
-                isMandatory: true,
+                isMandatory: interviewState?.candidateData?.experience === "experienced" ? true : false,
                 Err: commonState?.validated && !interviewState?.candidateData?.designation ? "Organization name required" : null
             },
             {
@@ -506,7 +533,7 @@ const JsonData = () => {
                 options: jsonOnly?.yearOfExp,
                 divClassName: `col-12 col-md-8 col-lg-4 p-1 mt-2 ${interviewState?.candidateData?.experience !== "experienced" ? "d-none" : ""}`,
                 change: (e) => dispatch(handleInterviewRegistrationOnChange({ canditateExpType: e.target.value })),
-                isMandatory: true,
+                isMandatory: interviewState?.candidateData?.experience === "experienced" ? true : false,
                 Err: commonState?.validated && !interviewState?.candidateData?.canditateExpType ? "Years of Experience required" : null
             },
 

@@ -108,7 +108,7 @@ const AdminSlice = createSlice({
                 case "response":
                     state.create_update_campaign_spinner = false;
                     state.campaigns_data.campaignCount = state.campaigns_data.campaignCount || 0 + 1;
-                    state.campaigns_data.campaign.push(data);
+                    state.campaigns_data.campaign.unshift(data);
                     state.create_campaign = {}
                     break;
 

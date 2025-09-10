@@ -5,16 +5,16 @@ import SpinnerComponent from "Components/Spinner/Spinner";
 import JsonData from "Utils/JsonData";
 import Icons from "Utils/Icons";
 import { resetModalBox, updateModalShow } from "Views/Common/Slice/Common_slice";
-import { handleCloseTestAndNavigate, handleCloseTestEndpoint } from "Views/InterviewCandidates/Action/interviewAction";
-import Img from "Components/Img/Img";
-import Image from "Utils/Image";
+import { handleCloseTestAndNavigate, handleCloseTestEndpoint, handleGetQuestions } from "Views/InterviewCandidates/Action/interviewAction";
 import { Inputfunctions } from "./Inputfunctions";
 import { handleAddOrUpdateQuestionPattern, handleCreateCampaign, handleDeleteQuestionPattern, handleEditQuestionPattern } from "Views/Admin/Action/AdminAction";
 import { edit_campaign_data } from "Views/Admin/Slice/AdminSlice";
+import { useState } from "react";
+import { exitFullScreen } from "./fullscreenmode";
 
 export function OverallModel() {
     const { commonState, interviewState, adminState } = useCommonState();
-
+    const [agreed, setAgreed] = useState(false);
     const dispatch = useDispatch();
     const JsonJsx = JsonData()?.jsxJson;
     const navigate = useCustomNavigate();
@@ -40,42 +40,106 @@ export function OverallModel() {
         switch (commonState?.modal_from) {
             case "interview_candidate":
                 switch (commonState?.modal_type) {
-                    case "registration_completed":
-                        return <div className="w-100">
-                            <div className="row py-5 align-items-center justify-content-center h-100 w-100">
-                                <div className="col-12 text-center">
-                                    {Icons.testSucccess}
-                                    <h5 className="text-center my-3">Registration successfull</h5>
-                                    <p className="text-secondary">Your Login credentials</p>
+                    case "generate_question_modal":
+                        return <div className="w-100 instructions_height overflowY">
+                            <div className="h-100 row align-items-center justify-content-center w-100">
+                                <div className="col-8">
+                                    <h2 className="text-center">Welcome to Adra Product Studio</h2>
+                                    <h3 style={{ marginTop: "20px" }}>Test Instructions</h3>
+                                    <ul style={{ lineHeight: "1.8" }}>
+                                        <li>Do not switch tabs or minimize the test window during the exam.</li>
+                                        <li>Ensure you have a stable internet connection throughout the test.</li>
+                                        <li>Do not use mobile phones, calculators, or external devices unless permitted.</li>
+                                        <li>You must complete the test within the given time limit.</li>
+                                        <li>Once the test begins, do not refresh or close the browser.</li>
+                                        <li>Any suspicious activity may result in disqualification.</li>
+                                    </ul>
 
-                                    <div className="py-3 border rounded-4">
-                                        <h5 className="text-center my-3 fs-17">Username : <span>{commonState?.usernamee}</span></h5>
-                                        <h5 className="text-center my-3 fs-17">Password : <span>{commonState?.passwordd}</span></h5>
+                                    <p style={{ marginTop: "20px", fontWeight: "bold" }}>
+                                        By starting the test, you agree to follow these rules.
+                                        Click the <u>Start Test</u> button below to begin.
+                                    </p>
 
-                                        <ButtonComponent
-                                            buttonName="Click to login"
-                                            className="btn-outline-secondary px-5"
-                                            clickFunction={() => {
-                                                dispatch(resetModalBox())
-                                                navigate("/")
+                                    <div style={{ marginTop: "15px" }}>
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                checked={agreed}
+                                                onChange={(e) => setAgreed(e.target.checked)}
+                                            />{" "}
+                                            I have read and agree to the instructions
+                                        </label>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <button
+                                            onClick={() => dispatch(handleGetQuestions)}
+                                            style={{
+                                                marginTop: "20px",
+                                                padding: "10px 20px",
+                                                fontSize: "16px",
+                                                cursor: "pointer",
+                                                backgroundColor: agreed ? "#4caf50" : "#ccc",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "5px",
                                             }}
-                                        />
+                                            disabled={!agreed || interviewState?.start_test_spinner}
+                                        >
+                                            {interviewState?.start_test_spinner ? "Getting Questions..." : "Start Test"}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                    case "malpractice_detected":
+                        return <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" >
+                            <div className="card shadow-lg border-0 text-center p-5" style={{ maxWidth: "500px", borderRadius: "20px" }} >
+                                <div className="card-body">
+                                    <div className="mb-4">
+                                        {Icons?.warningIcon}
+                                    </div>
+                                    <h3 className="text-danger fw-bold">Malpractice Detected</h3>
+                                    <p className="text-muted mt-3">
+                                        Switching tabs or minimizing the window is not allowed.
+                                        <br />
+                                        If you do this again, the test will be automatically closed.
+                                    </p>
+                                    <button className="btn btn-warning px-4 mt-4 fw-bold" onClick={() => dispatch(resetModalBox())} >
+                                        Resume Test
+                                    </button>
+                                </div>
+                            </div>
+                        </div >
+
+                    case "malpracticed_again":
+                        return <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" >
+                            <div className="card shadow-lg border-0 text-center p-5" style={{ maxWidth: "500px", borderRadius: "20px" }} >
+                                <div className="card-body">
+                                    <div className="mb-4">
+                                        {Icons?.warningIcon}
+                                    </div>
+                                    <h3 className="text-danger fw-bold">Malpractice Detected Again</h3>
+                                    <h3 className="text-danger fw-bold">Test Closed</h3>
+                                    <p className="text-muted mt-3">
+                                        You violated the rules multiple times. The test has been terminated.
+                                    </p>
+                                    <button className="btn btn-danger px-4 mt-4 fw-bold"
+                                        onClick={() => {
+                                            dispatch(resetModalBox())
+                                            navigate("/")
+                                        }}>
+                                        Exit
+                                    </button>
+                                </div>
+                            </div>
+                        </div >
+
                     case "test_completed":
                         return <div className="w-100 interview_candidate_height">
                             <div className="row py-5 align-items-center justify-content-center h-100 w-100">
                                 <div className="col-6 text-center">
-                                    <Img
-                                        src={Image?.CompanyLogo}
-                                        className="cursor-pointer"
-                                        width="100rem"
-                                        height="67rem"
-                                    />
-
                                     <h5 className="text-center my-3">Test completed</h5>
                                     <p className="text-secondary">Thank you for your commitment, and best of luck with your next steps!....</p>
                                     <ButtonComponent
@@ -260,7 +324,7 @@ export function OverallModel() {
             showModalFooter={true}
             modalFooterClassname="border-0"
             modalFooter={modalFooterFun()}
-            modalClassname={'rounded-4'}
+            modalClassname={'rounded-3'}
         />
     )
 }

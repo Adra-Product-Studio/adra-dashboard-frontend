@@ -55,7 +55,7 @@ const InterviewCandidatesRegistration = () => {
                                                 :
                                                 "Continue"
                                             }
-                                            clickFunction={() => dispatch(handleRegisterCandidate(interviewState))}
+                                            clickFunction={() => dispatch(handleRegisterCandidate({ candidateRegistration, input_data: interviewState?.candidateData || {} }, navigate))}
                                             btnDisable={interviewState?.buttonSpinner}
                                         />
                                     </div>

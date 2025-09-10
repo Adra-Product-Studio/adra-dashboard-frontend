@@ -19,14 +19,17 @@ const CampaignCandidatesCard = ({
         } else if (status === "Test Started") {
             return <span className='text-warning'>Test Started</span>
         }
+        else if (status === "malpractice") {
+            return <span className='text-danger'>Malpractice</span>
+        }
     }
 
     function apti_status_colors(status) {
         if (status === "Test Completed") return 'test_completed_badge';
         else if (status === "Not Started") return 'test_not_started_badge';
         else if (status === "Test Started") return 'test_progress_badge';
+        else if (status === "malpractice") return 'test_not_started_badge';
     }
-
 
     useEffect(() => {
         const calculateTimeLeft = () => {
@@ -93,8 +96,11 @@ const CampaignCandidatesCard = ({
             <Card.Body className='pb-0'>
                 <div className='row align-items-center border-bottom'>
                     <div className="col-12 text-center mt-3">
-                        <Img src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" alt="candidate image" width="80rem" height="80rem" className="rounded-3" />
-                        <h6>
+                        <Card.Title className="mb-3 text-center pt-2">
+                            <Img src={data?.profile_photo_path ? `${process.env.REACT_APP_CDN_URL}${data?.profile_photo_path}` : "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"} alt="Fellowship Candidate" className="fellowship_candidate_image" />
+                        </Card.Title>
+
+                        <h6 className='mt-3'>
                             <span className='border-end pe-2'>{data?.name || ''}</span>
                             {data?.experience && <span className='ps-2'>{data?.experience || ''}</span>}
                         </h6>
@@ -104,7 +110,7 @@ const CampaignCandidatesCard = ({
                             {data?.age && <span className='ps-2'>{data?.age || ''}</span>}
                         </p>
 
-                        {data?.status !== "Test Completed" && timeLeft !== "Test time is over" ?
+                        {data?.status !== "Test Completed" && timeLeft !== "Test time is over" && data?.status !== "malpractice" ?
                             <p>
                                 <PiClockCountdown size={22} />
                                 <span className='ps-2'>{timeLeft}</span>
@@ -112,7 +118,7 @@ const CampaignCandidatesCard = ({
                             :
                             null
                         }
-                        {timeLeft === "Test time is over" || data?.status === "Test Completed" ? (
+                        {timeLeft === "Test time is over" || data?.status === "Test Completed" || data?.status === "malpractice" ? (
                             <p>
                                 Test Score:{" "}
                                 {test_score(data?.test_score)}
@@ -123,7 +129,7 @@ const CampaignCandidatesCard = ({
                 </div>
 
                 {detail_view && data?.test_score &&
-                    <div className='py-3 border-bottom'>
+                    <div className='py-3'>
                         <h5>Marks scored</h5>
                         <ul className='m-0'>
                             {Object.entries(data?.test_score || {}).map(([key, value], index) => (
@@ -133,36 +139,38 @@ const CampaignCandidatesCard = ({
                     </div>
                 }
 
-                <div className="pt-3">
-                    <table className='table table-borderless m-0'>
-                        <tbody>
-                            <tr>
-                                <td className='col-1'>
-                                    {Icons.mailIcon}
-                                </td>
-                                <td className='text-break'>{data?.email || ''}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {Icons.locationIcon}
-                                </td>
-                                <td className='text-break'>{data?.address || ''}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {Icons.phoneIcon}
-                                </td>
-                                <td className='text-break'>{data?.phoneNumber || ''}</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {Icons.qualificationIcon}
-                                </td>
-                                <td className='text-break'>{data?.candidateQualification || ''}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                {/* {!detail_view && ( */}
+                    <div className="pt-3">
+                        <table className='table table-borderless m-0'>
+                            <tbody>
+                                <tr>
+                                    <td className='col-1'>
+                                        {Icons.mailIcon}
+                                    </td>
+                                    <td className='text-break'>{data?.email || ''}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {Icons.locationIcon}
+                                    </td>
+                                    <td className='text-break'>{data?.address || ''}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {Icons.phoneIcon}
+                                    </td>
+                                    <td className='text-break'>{data?.phoneNumber || ''}</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {Icons.qualificationIcon}
+                                    </td>
+                                    <td className='text-break'>{data?.candidateQualification || ''}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {/* )} */}
             </Card.Body>
 
             <Card.Footer className='border-0 bg-transparent'>
@@ -237,7 +245,6 @@ const CampaignCandidatesCard = ({
                         </table>
                     </div>
                 )}
-
             </Card.Footer>
         </Card >
     )

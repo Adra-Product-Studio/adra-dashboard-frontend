@@ -4,6 +4,7 @@ import { decryptData, encryptData } from "Security/Crypto/Crypto";
 import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails, getFellowshipCandidates, getSampleTest } from "Views/Admin/Slice/AdminSlice";
 import {
     getQuestionsFailure,
+    getQuestionsResponse,
     getRegistrationRoles,
     registerCandidateFailure,
     registerCandidateResponse,
@@ -20,6 +21,7 @@ const initialState = {
     modal_from: null,
     modal_type: null,
     modal_close_btn: true,
+    enable_lg_autoScroll: false,
 
     canvasShow: false,
     isOnline: true,
@@ -37,6 +39,7 @@ const initialState = {
     token: Cookies.get('log') ? decryptData(Cookies.get('log'))?.token : '',
     user_id: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_id : '',
     user_role: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_role : '',
+    involved_in_tab_switching: Cookies.get('log') ? decryptData(Cookies.get('log'))?.involved_in_tab_switching : false,
 
     showing_entries: [10, 20, 50],
     pageSize: 10,
@@ -112,13 +115,17 @@ const commonSlice = createSlice({
             state.token = null;
         },
         loginResponse(state, action) {
-            const { token, user_role } = action.payload;
+            const { token, user_role, involved_in_tab_switching } = action.payload;
             let log = { token: token || '', user_role: user_role || '' }
-            Cookies.set('log', encryptData(log));
+            if (user_role === "interview_candidate") {
+                log.involved_in_tab_switching = involved_in_tab_switching
+            }
 
+            Cookies.set('log', encryptData(log));
             state.token = token || '';
             state.user_role = user_role || '';
             state.buttonSpinner = false;
+            state.involved_in_tab_switching = involved_in_tab_switching || 0
             state.eyeOpen = !state.eyeOpen;
         },
         updateToken(state, action) {
@@ -226,12 +233,13 @@ const commonSlice = createSlice({
             });
         },
         updateOverallModalData(state, action) {
-            const { size, from, type } = action.payload;
+            const { size, from, type, enable_lg_autoScroll } = action.payload;
             Object.assign(state, {
                 modalShow: true,
                 modalSize: size,
                 modal_from: from,
-                modal_type: type
+                modal_type: type,
+                enable_lg_autoScroll: enable_lg_autoScroll || false
             });
         },
         updateFellowshipCandidatesData(state, action) {
@@ -264,6 +272,29 @@ const commonSlice = createSlice({
                 default:
                     break;
             }
+        },
+        updateMalpracticeData(state, action) {
+            const { remaining_switching_count } = action.payload;
+
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            decrypt_cookie.involved_in_tab_switching = remaining_switching_count;
+            Cookies.set('log', encryptData(decrypt_cookie));
+            state.involved_in_tab_switching = remaining_switching_count;
+
+            Object.assign(state, {
+                modalShow: true,
+                modalSize: 'ld',
+                modal_from: "interview_candidate",
+                modal_type: 'malpractice_detected',
+            });
+        },
+        malpracticeTestClose(state) {
+            Object.assign(state, {
+                modalShow: true,
+                modalSize: 'ld',
+                modal_from: "interview_candidate",
+                modal_type: 'malpracticed_again',
+            });
         }
     },
     extraReducers: (builder) => {
@@ -271,14 +302,6 @@ const commonSlice = createSlice({
             .addCase(registerCandidateResponse, (state, action) => {
                 state.usernamee = action.payload?.username;
                 state.passwordd = action.payload?.password;
-                Object.assign(state, {
-                    modalSize: "md",
-                    modal_from: "interview_candidate",
-                    modal_type: "registration_completed",
-                    modalShow: true,
-                    modal_close_btn: false,
-                    enable_lg_autoScroll: true
-                });
             })
             .addCase(submitTestByManual, (state) => {
                 Object.assign(state, {
@@ -300,6 +323,18 @@ const commonSlice = createSlice({
                     enable_lg_autoScroll: true
                 });
             })
+
+            .addCase(getQuestionsResponse, (state) => {
+                Object.assign(state, {
+                    modalSize: "",
+                    modal_from: "",
+                    modal_type: "",
+                    modalShow: false,
+                    modal_close_btn: false,
+                    enable_lg_autoScroll: false
+                })
+            })
+
             .addCase(updateTimeOverCloseTest, (state, action) => {
                 state.usernamee = action.payload?.username;
                 state.passwordd = action.payload?.password;
@@ -417,7 +452,8 @@ export const {
     updateSearchValue, clearSearch, updateSearchClickedTrue,
     updateSearchClickedFalse, updateEntriesCount, updateApplyFilterClickedTrue,
     updateApplyFilterClickedFalse, closeTestMode, updateOverallModalData,
-    updateFellowshipCandidatesData, fellowship_candidate_register_endpoint
+    updateFellowshipCandidatesData, fellowship_candidate_register_endpoint,
+    updateMalpracticeData, malpracticeTestClose
 
 } = commonSlice.actions;
 
