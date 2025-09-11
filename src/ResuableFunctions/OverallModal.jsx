@@ -10,7 +10,6 @@ import { Inputfunctions } from "./Inputfunctions";
 import { handleAddOrUpdateQuestionPattern, handleCreateCampaign, handleDeleteQuestionPattern, handleEditQuestionPattern } from "Views/Admin/Action/AdminAction";
 import { edit_campaign_data } from "Views/Admin/Slice/AdminSlice";
 import { useState } from "react";
-import { exitFullScreen } from "./fullscreenmode";
 
 export function OverallModel() {
     const { commonState, interviewState, adminState } = useCommonState();
@@ -126,10 +125,7 @@ export function OverallModel() {
                                         You violated the rules multiple times. The test has been terminated.
                                     </p>
                                     <button className="btn btn-danger px-4 mt-4 fw-bold"
-                                        onClick={() => {
-                                            dispatch(resetModalBox())
-                                            navigate("/")
-                                        }}>
+                                        onClick={() => dispatch(handleCloseTestAndNavigate)}>
                                         Exit
                                     </button>
                                 </div>

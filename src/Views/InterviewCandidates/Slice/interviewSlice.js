@@ -10,7 +10,7 @@ const interviewSlice = createSlice({
         buttonSpinner: false,
         initialGlow: false,
         generatedQuestions: [],
-        isDataPresentInIndexedDb: true,
+        isDataPresentInIndexedDb: false,
         selectedQuestionIndex: 0,
         answeredQuestionPercentage: 0,
         test_end_timeStamp: Cookies.get('log') ? decryptData(Cookies.get('log'))?.testEndOn : '',
@@ -155,7 +155,8 @@ const interviewSlice = createSlice({
                 calculate_remaining_time: null,
                 answeredQuestionPercentage: 0,
                 selectedQuestionIndex: 0,
-                generatedQuestions: []
+                generatedQuestions: [],
+                isDataPresentInIndexedDb: false
             }
         },
         submitTestRequest(state, action) {
@@ -193,7 +194,8 @@ const interviewSlice = createSlice({
                 calculate_remaining_time: null,
                 answeredQuestionPercentage: 0,
                 selectedQuestionIndex: 0,
-                generatedQuestions: []
+                generatedQuestions: [],
+                isDataPresentInIndexedDb: false
             }
         },
         getRegistrationRoles(state, action) {

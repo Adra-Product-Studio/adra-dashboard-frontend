@@ -17,20 +17,33 @@ const InterviewCandidatesHome = () => {
 
     useEffect(() => {
         const triggerMalpractice = () => {
-            console.log("triggered", commonState?.involved_in_tab_switching)
             if (commonState?.involved_in_tab_switching > 0) {
                 dispatch(handleUpdateMalpractice(commonState?.involved_in_tab_switching));
-            }
-
-            if (commonState?.involved_in_tab_switching === 0) {
-                initializeDB(process.env.REACT_APP_INDEXEDDB_DATABASE_NAME, process.env.REACT_APP_INDEXEDDB_DATABASE_VERSION, process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME)
+            } else {
+                initializeDB(
+                    process.env.REACT_APP_INDEXEDDB_DATABASE_NAME,
+                    process.env.REACT_APP_INDEXEDDB_DATABASE_VERSION,
+                    process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME
+                )
                     .then((db) => {
-                        const transaction = db.transaction(process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME, "readonly");
-                        const store = transaction.objectStore(process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME);
+                        const transaction = db.transaction(
+                            process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME,
+                            "readonly"
+                        );
+                        const store = transaction.objectStore(
+                            process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME
+                        );
                         const getAllRequest = store.getAll();
+
                         getAllRequest.onsuccess = function () {
-                            dispatch(handleCloseTestAutomatic({ close: 'malpractice', candidate_answers: getAllRequest.result }));
+                            dispatch(
+                                handleCloseTestAutomatic({
+                                    close: "malpractice",
+                                    candidate_answers: getAllRequest.result,
+                                })
+                            );
                         };
+
                         getAllRequest.onerror = function (event) {
                             console.error("Error fetching data from object store:", event.target.error);
                         };
@@ -41,12 +54,16 @@ const InterviewCandidatesHome = () => {
             }
         };
 
-        const handleBlur = () => {
-            triggerMalpractice();
+        // Tab switching / browser minimize
+        const handleVisibilityChange = () => {
+            if (interviewState?.isDataPresentInIndexedDb && document.visibilityState === "hidden") {
+                triggerMalpractice();
+            }
         };
 
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === "hidden") {
+        // Window switching (Alt+Tab or focus loss)
+        const handleBlur = () => {
+            if (interviewState?.isDataPresentInIndexedDb) {
                 triggerMalpractice();
             }
         };
@@ -58,7 +75,7 @@ const InterviewCandidatesHome = () => {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("blur", handleBlur);
         };
-    }, [commonState?.involved_in_tab_switching]);
+    }, [commonState?.involved_in_tab_switching, interviewState?.isDataPresentInIndexedDb, dispatch]);
 
     useEffect(() => {
         initializeDB(process.env.REACT_APP_INDEXEDDB_DATABASE_NAME, process.env.REACT_APP_INDEXEDDB_DATABASE_VERSION, process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME)
@@ -80,13 +97,21 @@ const InterviewCandidatesHome = () => {
     }, []);
 
     useEffect(() => {
-        if (!interviewState?.isDataPresentInIndexedDb) {
+        if (!interviewState?.isDataPresentInIndexedDb && !commonState?.test_over_logout) {
             dispatch(updateOverallModalData({ size: 'xl', from: 'interview_candidate', type: 'generate_question_modal', enable_lg_autoScroll: false }))
         }
-    }, [interviewState?.isDataPresentInIndexedDb])
+
+        if (commonState?.test_over_logout === 'malpracticed_again') {
+            dispatch(updateOverallModalData({ size: 'md', from: 'interview_candidate', type: 'malpracticed_again', enable_lg_autoScroll: false }))
+        }
+
+        if (commonState?.test_over_logout === 'test_completed') {
+            dispatch(updateOverallModalData({ size: 'xl', from: 'interview_candidate', type: 'test_completed', enable_lg_autoScroll: false }))
+        }
+    }, [])
 
     useEffect(() => {
-        if (interviewState?.test_end_timeStamp) {
+        if (interviewState?.test_end_timeStamp && commonState?.involved_in_tab_switching > 0 && !commonState?.test_over_logout) {
             const timer = setInterval(() => {
                 const updatedTimeLeft = CalculateTestTime(interviewState?.test_end_timeStamp);
                 dispatch(updateRemainingTestTiming(updatedTimeLeft))
@@ -180,7 +205,7 @@ const InterviewCandidatesHome = () => {
                                         <p>{interviewState?.generatedQuestions[interviewState?.selectedQuestionIndex]?.question}</p>
                                         <div className='w-100'>
                                             {interviewState?.generatedQuestions[interviewState?.selectedQuestionIndex]?.options?.map((val, ind) => (
-                                                <div className='border p-3 my-2 rounded-2 cursor-pointer' onClick={() => document.getElementById(val + ind)?.click()}>
+                                                <div className='border p-3 my-2 rounded-2 cursor-pointer' onClick={() => document.getElementById(val + ind)?.click()} key={ind}>
                                                     <Checkbox
                                                         formType="radio"
                                                         formLabel={val}

@@ -261,7 +261,7 @@ const JsonData = () => {
                     let remove_image = interviewState?.candidateData?.image_show_ui.filter((item) => item?.id !== e);
                     dispatch(handleInterviewRegistrationOnChange({ image_show_ui: remove_image, image: {} }));
                 },
-                isMandatory: true,
+                isMandatory: false,
                 Err: commonState?.validated && !interviewState?.candidateData?.image_show_ui?.length ? "Recent photo required" : null
             },
             {

@@ -40,6 +40,7 @@ const initialState = {
     user_id: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_id : '',
     user_role: Cookies.get('log') ? decryptData(Cookies.get('log'))?.user_role : '',
     involved_in_tab_switching: Cookies.get('log') ? decryptData(Cookies.get('log'))?.involved_in_tab_switching : false,
+    test_over_logout: Cookies.get('log') ? decryptData(Cookies.get('log'))?.test_over_logout : false,
 
     showing_entries: [10, 20, 50],
     pageSize: 10,
@@ -216,11 +217,7 @@ const commonSlice = createSlice({
             state.apply_filter = false;
         },
         closeTestMode(state) {
-            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
-            delete decrypt_cookie.token;
-            delete decrypt_cookie.user_role;
-            Cookies.set('log', encryptData(decrypt_cookie));
-
+            Cookies.remove('log');
             Object.assign(state, {
                 modalShow: false,
                 modalSize: "md",
@@ -229,7 +226,10 @@ const commonSlice = createSlice({
                 modal_close_btn: true,
                 token: null,
                 user_role: null,
-                enable_lg_autoScroll: false
+                user_id: null,
+                involved_in_tab_switching: 0,
+                enable_lg_autoScroll: false,
+                test_over_logout: false
             });
         },
         updateOverallModalData(state, action) {
@@ -283,17 +283,22 @@ const commonSlice = createSlice({
 
             Object.assign(state, {
                 modalShow: true,
-                modalSize: 'ld',
+                modalSize: 'md',
                 modal_from: "interview_candidate",
                 modal_type: 'malpractice_detected',
             });
         },
         malpracticeTestClose(state) {
+            let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+            decrypt_cookie.test_over_logout = 'malpracticed_again';
+            Cookies.set('log', encryptData(decrypt_cookie));
+
             Object.assign(state, {
                 modalShow: true,
-                modalSize: 'ld',
+                modalSize: 'md',
                 modal_from: "interview_candidate",
                 modal_type: 'malpracticed_again',
+                test_over_logout: 'malpracticed_again'
             });
         }
     },
@@ -314,13 +319,18 @@ const commonSlice = createSlice({
                 });
             })
             .addCase(submitTestResponse, (state) => {
+                let decrypt_cookie = Cookies.get('log') ? decryptData(Cookies.get('log')) : {};
+                decrypt_cookie.test_over_logout = 'test_completed';
+                Cookies.set('log', encryptData(decrypt_cookie));
+
                 Object.assign(state, {
                     modalSize: "xl",
                     modal_from: "interview_candidate",
                     modal_type: "test_completed",
                     modalShow: true,
                     modal_close_btn: false,
-                    enable_lg_autoScroll: true
+                    enable_lg_autoScroll: true,
+                    test_over_logout: 'test_completed'
                 });
             })
 
