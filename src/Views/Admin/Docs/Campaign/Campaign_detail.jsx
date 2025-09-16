@@ -47,7 +47,7 @@ const Campaign_detail = () => {
                     adminState?.campaigns_data?.candidates?.length ?
                         <div className="row py-3">
                             {adminState?.campaigns_data?.candidates?.map((item, index) => (
-                                <div className='col-12 col-md-6 col-lg-4 p-2' key={index}>
+                                <div className='col-12 col-md-6 col-lg-4 col-xl-3 p-2' key={index}>
                                     <CampaignCandidatesCard data={item} clickFunction={() => navigate(`/dashboard/interview/${campaign_id}/${item?.candidate_id}`)} />
                                 </div>
                             ))}

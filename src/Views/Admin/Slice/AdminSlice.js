@@ -11,6 +11,7 @@ const initialState = {
     fellowship_candidates: [],
     sample_test: {},
     sample_test_glow: false,
+    delete_campaign_spinner: false
 };
 
 const AdminSlice = createSlice({
@@ -106,14 +107,45 @@ const AdminSlice = createSlice({
                     break;
 
                 case "response":
+                    const { type } = data;
+                    if (type === "edit") {
+                        state.campaigns_data.campaign = state.campaigns_data.campaign.map(item =>
+                            item._id === data._id ? data : item
+                        );
+                    } else {
+                        state.campaigns_data.campaignCount = state.campaigns_data.campaignCount || 0 + 1;
+                        state.campaigns_data.campaign.unshift(data);
+                    }
+
                     state.create_update_campaign_spinner = false;
-                    state.campaigns_data.campaignCount = state.campaigns_data.campaignCount || 0 + 1;
-                    state.campaigns_data.campaign.unshift(data);
                     state.create_campaign = {}
                     break;
 
                 case "failure":
                     state.create_update_campaign_spinner = false;
+                    break;
+
+                default:
+                    break;
+            }
+        },
+
+        delete_campaign_endpoint(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.delete_campaign_spinner = true;
+                    break;
+
+                case "response":
+                    state.campaigns_data.campaign = state.campaigns_data.campaign.filter(item => item._id != data._id)
+                    state.delete_campaign_spinner = false;
+                    state.create_campaign = {}
+                    break;
+
+                case "failure":
+                    state.delete_campaign_spinner = false;
                     break;
 
                 default:
@@ -273,7 +305,45 @@ const AdminSlice = createSlice({
                 default:
                     break;
             }
-        }
+        },
+
+        delete_candidate_endpoint(state, action) {
+            const { type, data } = action.payload;
+
+            switch (type) {
+                case "request":
+                    state.delete_candidate_spinner = true;
+                    break;
+
+                case "response":
+                    state.campaigns_data.candidates = state.campaigns_data.candidates.filter(item => item._id !== data._id)
+                    state.delete_candidate_spinner = false;
+                    break;
+
+                case "failure":
+                    state.delete_candidate_spinner = false;
+                    break;
+
+                default:
+                    break;
+            }
+        },
+    },
+    extraReducers(builder) {
+        builder
+            .addCase("commonSlice/updateOverallModalData", (state, action) => {
+                const { type, data } = action.payload;
+
+                if (type === 'create_campaign' && data) {
+                    const date = new Date(data?.interview_date);
+                    const formatted = date.toISOString().split("T")[0];
+                    state.create_campaign = { ...data, interview_date: formatted } || {};
+                }
+            })
+
+            .addCase("commonSlice/resetModalBox", (state) => {
+                state.create_campaign = {}
+            })
     }
 });
 
@@ -281,7 +351,8 @@ export const {
     update_create_campaign_data, getCampaign, postOrEditCampign,
     getCampaignAssignedQuestions, assignQuestionTypes, create_individual_campaign_ques_pattern,
     edit_campaign_data, edit_individual_campaign_ques_pattern, delete_individual_campaign_ques_pattern,
-    getCampaignCandidateDetails, getFellowshipCandidates, getSampleTest
+    getCampaignCandidateDetails, getFellowshipCandidates, getSampleTest,
+    delete_campaign_endpoint, delete_candidate_endpoint
 
 
 } = AdminSlice.actions;

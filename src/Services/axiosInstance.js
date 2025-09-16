@@ -13,29 +13,60 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...response, data: aesDecrypt(response.data) };
-    else return response;
+    if (process.env.REACT_APP_ENVIRONMENT === "production") {
+      try {
+        return { ...response, data: aesDecrypt(response.data) };
+      } catch (err) {
+        console.error("Decryption failed:", err);
+        return response; // fallback
+      }
+    }
+    return response;
   },
   async (error) => {
     let errorData = error || {};
-    if (process.env.REACT_APP_ENVIRONMENT === "production") return { ...errorData, response: { ...errorData.response, data: aesDecrypt(errorData.response.data) } };
 
     try {
+      // Handle network errors (no response)
+      if (!errorData.response) {
+        return Promise.reject(errorData);
+      }
+
       const originalRequest = errorData.config;
-      if (errorData.response.status === 401 && !originalRequest._retry) {
+
+      // Token expired -> refresh
+      if (
+        errorData.response.status === 401 &&
+        !originalRequest._retry &&
+        errorData.response.data?.message === "Token expired"
+      ) {
         originalRequest._retry = true;
-        if (errorData.response.data.message === "Token expired") {
+        try {
           await store.dispatch(handlerefreshToken());
           return axiosInstance(originalRequest);
+        } catch (refreshErr) {
+          return Promise.reject(refreshErr);
         }
-      } else {
-        return Promise.reject(errorData?.response?.data || {});
       }
+
+      // In production, try decrypt error response
+      if (process.env.REACT_APP_ENVIRONMENT === "production") {
+        try {
+          errorData.response.data = aesDecrypt(errorData.response.data);
+        } catch (err) {
+          console.error("Error decrypting error response:", err);
+        }
+      }
+
+      return Promise.reject(errorData.response.data || errorData);
+
     } catch (err) {
+      console.error("Interceptor error:", err);
       return Promise.reject(err);
     }
   }
 );
+
 
 
 axiosInstance.interceptors.request.use((config) => {

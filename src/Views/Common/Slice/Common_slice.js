@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { decryptData, encryptData } from "Security/Crypto/Crypto";
-import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails, getFellowshipCandidates, getSampleTest } from "Views/Admin/Slice/AdminSlice";
+import { getCampaignAssignedQuestions, postOrEditCampign, create_individual_campaign_ques_pattern, getCampaign, delete_individual_campaign_ques_pattern, getCampaignCandidateDetails, getFellowshipCandidates, getSampleTest, delete_campaign_endpoint, delete_candidate_endpoint } from "Views/Admin/Slice/AdminSlice";
 import {
     getQuestionsFailure,
     getQuestionsResponse,
@@ -18,6 +18,7 @@ import {
 const initialState = {
     modalShow: false,
     modalSize: "md",
+    modalData: {},
     modal_from: null,
     modal_type: null,
     modal_close_btn: true,
@@ -85,7 +86,8 @@ const commonSlice = createSlice({
                 modal_from: null,
                 modal_type: null,
                 modal_close_btn: true,
-                enable_lg_autoScroll: false
+                enable_lg_autoScroll: false,
+                modalData: {}
             });
         },
         updateToast(state, action) {
@@ -233,13 +235,14 @@ const commonSlice = createSlice({
             });
         },
         updateOverallModalData(state, action) {
-            const { size, from, type, enable_lg_autoScroll } = action.payload;
+            const { size, from, type, enable_lg_autoScroll, data } = action.payload;
             Object.assign(state, {
                 modalShow: true,
                 modalSize: size,
                 modal_from: from,
                 modal_type: type,
-                enable_lg_autoScroll: enable_lg_autoScroll || false
+                enable_lg_autoScroll: enable_lg_autoScroll || false,
+                modalData: data || {}
             });
         },
         updateFellowshipCandidatesData(state, action) {
@@ -386,6 +389,8 @@ const commonSlice = createSlice({
                         getRegistrationRoles.toString(),
                         getQuestionsFailure.toString(),
                         getSampleTest.toString(),
+                        delete_campaign_endpoint.toString(),
+                        delete_candidate_endpoint.toString(),
                     ].includes(action.type)
                 },
                 setErrorState
@@ -407,6 +412,9 @@ const commonSlice = createSlice({
                 function (action) {
                     return [
                         postOrEditCampign.toString(),
+                        submitTestFailure.toString(),
+                        delete_campaign_endpoint.toString(),
+                        delete_candidate_endpoint.toString()
                     ].includes(action.type)
                 },
                 (state, action) => {
@@ -449,8 +457,9 @@ function resetModal(state, action) {
     state.modalSize = "md"
     state.modal_from = null
     state.modal_type = null
-    state.modal_close_btn = true
+    state.modal_close_btn = false
     state.enable_lg_autoScroll = false
+    state.modalData = {}
 }
 
 export const {

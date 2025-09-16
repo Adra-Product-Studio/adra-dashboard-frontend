@@ -23,12 +23,6 @@ const Campaign = () => {
                 <div className="flex-grow-1 text-end">
                     <div className="w-100 d-flex justify-content-end">
                         <div className="px-2">
-                            <ButtonComponent type="button" buttonName="Sort by" className="btn btn-outline-dark" />
-                        </div>
-                        <div className="px-2">
-                            <ButtonComponent type="button" buttonName="Filter" className="btn btn-outline-dark" />
-                        </div>
-                        <div className="px-2">
                             <ButtonComponent type="button" buttonName="Create Campaign" className="btn btn-dark" clickFunction={() => dispatch(updateOverallModalData({ size: 'md', from: 'admin', type: 'create_campaign' }))} />
                         </div>
                     </div>

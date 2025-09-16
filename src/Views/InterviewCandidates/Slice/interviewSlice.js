@@ -178,7 +178,8 @@ const interviewSlice = createSlice({
         submitTestFailure(state, action) {
             return {
                 ...state,
-                buttonSpinner: false
+                buttonSpinner: false,
+                submit_test: false
             }
         },
         submitTestRequestSpinner(state, action) {

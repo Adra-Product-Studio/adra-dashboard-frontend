@@ -1,8 +1,11 @@
+import ButtonComponent from 'Components/Button/Button';
 import Img from 'Components/Img/Img'
 import React, { useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap'
 import { PiClockCountdown } from "react-icons/pi";
+import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import Icons from 'Utils/Icons';
+import { updateOverallModalData } from 'Views/Common/Slice/Common_slice';
 
 const CampaignCandidatesCard = ({
     data, clickFunction,
@@ -10,6 +13,7 @@ const CampaignCandidatesCard = ({
 
 }) => {
     const [timeLeft, setTimeLeft] = useState("");
+    const dispatch = useDispatch();
 
     function apti_status(status) {
         if (status === "Test Completed") {
@@ -89,18 +93,17 @@ const CampaignCandidatesCard = ({
     }
 
     return (
-        <Card className={`bg-white shadow-sm border-0 rounded-4 h-100 position-relative ${card_className || ''}`} onClick={!detail_view ? clickFunction : null}>
+        <Card className={`bg-white shadow-sm border-0 rounded-4 h-100 position-relative ${card_className || ''}`}>
+            <Card.Title className="text-center mt-5">
+                <Img src={data?.profile_photo_path ? `${process.env.REACT_APP_CDN_URL}${data?.profile_photo_path}` : "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"} alt="Fellowship Candidate" className="fellowship_candidate_image" />
+            </Card.Title>
             <div className={`interview_candidate_badge ${apti_status_colors(data?.status || '')}`}>
                 {apti_status(data?.status || '')}
             </div>
             <Card.Body className='pb-0'>
-                <div className='row align-items-center border-bottom'>
-                    <div className="col-12 text-center mt-3">
-                        <Card.Title className="mb-3 text-center pt-2">
-                            <Img src={data?.profile_photo_path ? `${process.env.REACT_APP_CDN_URL}${data?.profile_photo_path}` : "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"} alt="Fellowship Candidate" className="fellowship_candidate_image" />
-                        </Card.Title>
-
-                        <h6 className='mt-3'>
+                <div className='row align-items-start border-bottom'>
+                    <div className={detail_view ? "col-12 text-center" : "col-10 ps-3"}>
+                        <h6>
                             <span className='border-end pe-2'>{data?.name || ''}</span>
                             {data?.experience && <span className='ps-2'>{data?.experience || ''}</span>}
                         </h6>
@@ -126,6 +129,15 @@ const CampaignCandidatesCard = ({
                         ) : null}
 
                     </div>
+                    {!detail_view && <div className="col-2">
+                        <ButtonComponent
+                            type="button"
+                            buttonName={Icons.deleteIcon}
+                            className="btn text-center"
+                            clickFunction={() => dispatch(updateOverallModalData({ size: 'md', from: 'admin', type: 'delete_candidate', data: data }))}
+                        />
+                    </div>
+                    }
                 </div>
 
                 {detail_view && data?.test_score &&
@@ -140,36 +152,36 @@ const CampaignCandidatesCard = ({
                 }
 
                 {/* {!detail_view && ( */}
-                    <div className="pt-3">
-                        <table className='table table-borderless m-0'>
-                            <tbody>
-                                <tr>
-                                    <td className='col-1'>
-                                        {Icons.mailIcon}
-                                    </td>
-                                    <td className='text-break'>{data?.email || ''}</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {Icons.locationIcon}
-                                    </td>
-                                    <td className='text-break'>{data?.address || ''}</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {Icons.phoneIcon}
-                                    </td>
-                                    <td className='text-break'>{data?.phoneNumber || ''}</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {Icons.qualificationIcon}
-                                    </td>
-                                    <td className='text-break'>{data?.candidateQualification || ''}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div className="pt-3" onClick={!detail_view ? clickFunction : null}>
+                    <table className='table table-borderless m-0'>
+                        <tbody>
+                            <tr>
+                                <td className='col-1'>
+                                    {Icons.mailIcon}
+                                </td>
+                                <td className='text-break'>{data?.email || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.locationIcon}
+                                </td>
+                                <td className='text-break'>{data?.address || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.phoneIcon}
+                                </td>
+                                <td className='text-break'>{data?.phoneNumber || ''}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {Icons.qualificationIcon}
+                                </td>
+                                <td className='text-break'>{data?.candidateQualification || ''}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 {/* )} */}
             </Card.Body>
 

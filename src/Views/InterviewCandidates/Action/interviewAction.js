@@ -165,7 +165,6 @@ export const handleCloseTestAutomatic = (params) => async dispatch => {
         const { data } = await axiosInstance.post("/validate_answers", send_params)
         if (data?.error_code === 0) {
             if (params?.close !== 'malpractice') dispatch(submitTestResponse())
-
             IndexedDbDeleteFun();
         } else dispatch(submitTestFailure(data?.message))
     }
@@ -186,7 +185,7 @@ export const handleCloseTestEndpoint = candidate_answers => async dispatch => {
         }
 
         dispatch(submitTestRequestSpinner())
-        const { data } = await axiosInstance.post("/validate_answers", sendCandidateAnswers)
+        const { data } = await axiosInstance.post("/validate_answers", { close: 'automatic', candidate_answers: sendCandidateAnswers })
         if (data?.error_code === 0) {
             dispatch(submitTestResponse())
             IndexedDbDeleteFun();

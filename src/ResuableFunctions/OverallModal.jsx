@@ -7,9 +7,11 @@ import Icons from "Utils/Icons";
 import { resetModalBox, updateModalShow } from "Views/Common/Slice/Common_slice";
 import { handleCloseTestAndNavigate, handleCloseTestEndpoint, handleGetQuestions } from "Views/InterviewCandidates/Action/interviewAction";
 import { Inputfunctions } from "./Inputfunctions";
-import { handleAddOrUpdateQuestionPattern, handleCreateCampaign, handleDeleteQuestionPattern, handleEditQuestionPattern } from "Views/Admin/Action/AdminAction";
+import { handleAddOrUpdateQuestionPattern, handleCreateCampaign, handleDeleteCampaign, handleDeleteCandidate, handleDeleteQuestionPattern, handleEditCampaign, handleEditQuestionPattern } from "Views/Admin/Action/AdminAction";
 import { edit_campaign_data } from "Views/Admin/Slice/AdminSlice";
 import { useState } from "react";
+import Image from "Utils/Image";
+import ButtonSpinner from "Components/Spinner/ButtonSpinner";
 
 export function OverallModel() {
     const { commonState, interviewState, adminState } = useCommonState();
@@ -178,11 +180,51 @@ export function OverallModel() {
                     case "create_campaign":
                         return <div className="col-11 mx-auto py-2">
                             {Inputfunctions(JsonJsx?.create_campaign_inputs)}
-                            <ButtonComponent
-                                type="button"
+                            <ButtonSpinner
                                 className="btn btn-dark text-center w-100 mt-3"
-                                buttonName="Create"
-                                clickFunction={() => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date }))}
+                                title={adminState?.create_campaign?._id ? "Update" : "Create"}
+                                is_spinner={adminState?.create_update_campaign_spinner || false}
+                                clickFunction={adminState?.create_campaign?._id ?
+                                    () => dispatch(handleEditCampaign(adminState?.create_campaign))
+                                    :
+                                    () => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date }))}
+                            />
+                        </div>
+
+                    case "delete_campaign":
+                        return <div className="col-11 mx-auto py-2">
+                            <div className="col text-center">
+                                <img src={Image?.CandidatesNotFound} alt="delete campaign" width='100em' />
+                                <h5 className="mt-3">Delete Campaign</h5>
+                                <p>Are you sure you want to delete this
+                                    <span className="fw-bold px-2">{commonState?.modalData?.job_title}</span>
+                                    campaign?
+                                </p>
+                            </div>
+                            <ButtonSpinner
+                                className="btn btn-dark text-center w-100 mt-3"
+                                title={adminState?.delete_campaign_spinner ? "Deleting..." : "Delete"}
+                                is_spinner={adminState?.delete_campaign_spinner || false}
+                                clickFunction={() => dispatch(handleDeleteCampaign(commonState?.modalData))}
+                            />
+                        </div>
+
+                    case "delete_candidate":
+                        return <div className="col-11 mx-auto py-2">
+                            <div className="col text-center">
+                                <img src={Image?.CandidatesNotFound} alt="delete candidate" width='100em' />
+                                <h5 className="mt-3">Delete Candidate</h5>
+                                <p>Are you sure you want to delete candidate
+                                    <br />
+                                    <span className="fw-bold px-2 ">{commonState?.modalData?.name}</span>
+                                    ?
+                                </p>
+                            </div>
+                            <ButtonSpinner
+                                className="btn btn-dark text-center w-100 mt-3"
+                                title="Delete"
+                                is_spinner={adminState?.delete_candidate_spinner || false}
+                                clickFunction={() => dispatch(handleDeleteCandidate(commonState?.modalData))}
                             />
                         </div>
 
@@ -191,10 +233,9 @@ export function OverallModel() {
                             <div className="col-lg-5 row align-items-center border-end pe-4">
                                 {Inputfunctions(JsonJsx?.admin_create_assigning_questions)}
 
-                                <ButtonComponent
-                                    type="button"
+                                <ButtonSpinner
                                     className="btn btn-dark text-center w-100 mt-3"
-                                    buttonName={adminState?.create_assigning_questions?._id ? "Update" : "Add"}
+                                    title={adminState?.create_assigning_questions?._id ? "Update" : "Add"}
                                     clickFunction={
                                         adminState?.create_assigning_questions?._id ?
                                             () => dispatch(handleEditQuestionPattern({ ...adminState?.create_assigning_questions, campaign_id: adminState?.campaigns_data?._id }))

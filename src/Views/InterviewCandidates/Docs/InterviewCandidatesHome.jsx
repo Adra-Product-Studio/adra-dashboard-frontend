@@ -56,14 +56,14 @@ const InterviewCandidatesHome = () => {
 
         // Tab switching / browser minimize
         const handleVisibilityChange = () => {
-            if (interviewState?.isDataPresentInIndexedDb && document.visibilityState === "hidden") {
+            if (interviewState?.isDataPresentInIndexedDb && document.visibilityState === "hidden" && commonState?.test_over_logout !== 'malpracticed_again') {
                 triggerMalpractice();
             }
         };
 
         // Window switching (Alt+Tab or focus loss)
         const handleBlur = () => {
-            if (interviewState?.isDataPresentInIndexedDb) {
+            if (interviewState?.isDataPresentInIndexedDb && commonState?.test_over_logout !== 'malpracticed_again') {
                 triggerMalpractice();
             }
         };
@@ -75,7 +75,7 @@ const InterviewCandidatesHome = () => {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("blur", handleBlur);
         };
-    }, [commonState?.involved_in_tab_switching, interviewState?.isDataPresentInIndexedDb, dispatch]);
+    }, [commonState?.involved_in_tab_switching, commonState?.test_over_logout, interviewState?.isDataPresentInIndexedDb, dispatch]);
 
     useEffect(() => {
         initializeDB(process.env.REACT_APP_INDEXEDDB_DATABASE_NAME, process.env.REACT_APP_INDEXEDDB_DATABASE_VERSION, process.env.REACT_APP_INDEXEDDB_DATABASE_STORENAME)
@@ -85,7 +85,15 @@ const InterviewCandidatesHome = () => {
 
                 const getAllRequest = store.getAll();
                 getAllRequest.onsuccess = function () {
-                    dispatch(getQuestionFromDb(getAllRequest.result))
+                    if (commonState?.involved_in_tab_switching > 0) {
+                        if (!getAllRequest.result?.length) {
+                            dispatch(updateOverallModalData({ size: 'xl', from: 'interview_candidate', type: 'generate_question_modal', enable_lg_autoScroll: false }))
+                        } else {
+                            dispatch(getQuestionFromDb(getAllRequest.result))
+                        }
+                    } else {
+                        dispatch(updateOverallModalData({ size: 'xl', from: 'interview_candidate', type: 'test_completed', enable_lg_autoScroll: false }))
+                    }
                 };
                 getAllRequest.onerror = function (event) {
                     console.error("Error fetching data from object store:", event.target.error);
@@ -97,10 +105,6 @@ const InterviewCandidatesHome = () => {
     }, []);
 
     useEffect(() => {
-        if (!interviewState?.isDataPresentInIndexedDb && !commonState?.test_over_logout) {
-            dispatch(updateOverallModalData({ size: 'xl', from: 'interview_candidate', type: 'generate_question_modal', enable_lg_autoScroll: false }))
-        }
-
         if (commonState?.test_over_logout === 'malpracticed_again') {
             dispatch(updateOverallModalData({ size: 'md', from: 'interview_candidate', type: 'malpracticed_again', enable_lg_autoScroll: false }))
         }
@@ -138,7 +142,7 @@ const InterviewCandidatesHome = () => {
 
             return () => clearInterval(timer);
         }
-    }, [interviewState?.test_end_timeStamp])
+    }, [interviewState?.test_end_timeStamp, commonState?.involved_in_tab_switching, commonState?.test_over_logout])
 
     return (
         <div className='overflow-hidden'>

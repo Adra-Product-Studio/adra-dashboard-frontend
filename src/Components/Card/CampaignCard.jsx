@@ -1,7 +1,10 @@
+import ButtonComponent from 'Components/Button/Button';
 import React from 'react';
 import Card from 'react-bootstrap/Card';
+import { useDispatch } from 'ResuableFunctions/CustomHooks';
 import IsoStringDateConverter from 'ResuableFunctions/IsoStringDateConverter';
 import Icons from 'Utils/Icons';
+import { updateOverallModalData } from 'Views/Common/Slice/Common_slice';
 
 
 const CampaignCard = ({
@@ -10,6 +13,7 @@ const CampaignCard = ({
     campaign,
     clickFunction
 }) => {
+    const dispatch = useDispatch();
     const card_content = [
         {
             icon: Icons.campaign_calender_icon,
@@ -30,8 +34,27 @@ const CampaignCard = ({
 
     return (
         <Card className='border-0 shadow-sm rounded-4 h-100'>
-            <Card.Header className='bg-transparent py-3 border-0 border-bottom'>
-                <h6 className={placeholder ? "placeholder w-75 py-3 rounded" : ''}>{campaign?.job_title || ''}</h6>
+            <Card.Header className='bg-transparent py-3 border-0 border-bottom row'>
+                <div className="col-8">
+                    <h6 className={placeholder ? "placeholder w-75 py-3 rounded" : ''}>{campaign?.job_title || ''}</h6>
+                </div>
+                {placeholder ? null :
+                    <div className="col-4 row justify-content-between">
+                        <ButtonComponent
+                            type="button"
+                            buttonName={Icons.editIcon}
+                            className="btn col-5 text-center"
+                            clickFunction={() => dispatch(updateOverallModalData({ size: 'md', from: 'admin', type: 'create_campaign', data: campaign }))}
+                        />
+
+                        <ButtonComponent
+                            type="button"
+                            buttonName={Icons.deleteIcon}
+                            className="btn col-5 text-center"
+                            clickFunction={() => dispatch(updateOverallModalData({ size: 'md', from: 'admin', type: 'delete_campaign', data: campaign }))}
+                        />
+                    </div>
+                }
                 <p className={placeholder ? "placeholder w-50 py-3 rounded mb-0" : 'mb-0 text-secondary fs-13'}>
                     Posted on :
                     {

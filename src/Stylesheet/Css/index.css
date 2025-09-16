@@ -488,7 +488,7 @@
   width: 8rem;
   height: 8rem;
   border-radius: 20px;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 

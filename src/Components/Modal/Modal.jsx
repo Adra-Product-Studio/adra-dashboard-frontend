@@ -1,6 +1,6 @@
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch } from 'ResuableFunctions/CustomHooks';
-import { updateModalShow } from 'Views/Common/Slice/Common_slice';
+import { resetModalBox } from 'Views/Common/Slice/Common_slice';
 
 const ModalComponent = ({
   componentFrom,
@@ -38,7 +38,7 @@ const ModalComponent = ({
       centered={modalCentered}
       contentClassName={modalClassname}
       dialogClassName={modalDialogClassName}
-      onHide={() => dispatch(updateModalShow())}
+      onHide={() => dispatch(resetModalBox())}
     >
 
       {/* Header */}

@@ -203,7 +203,7 @@ const JsonData = () => {
                 value: interviewState?.candidateData?.phoneNumber || '',
                 divClassName: 'col-12 col-md-6 col-lg-4 p-1 mt-2',
                 change: (e) => {
-                    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 12) {
+                    if (/^\d*$/.test(e.target.value) && e.target.value.length <= 10) {
                         dispatch(handleInterviewRegistrationOnChange({ phoneNumber: e.target.value }))
                     }
                 },
@@ -262,7 +262,7 @@ const JsonData = () => {
                     dispatch(handleInterviewRegistrationOnChange({ image_show_ui: remove_image, image: {} }));
                 },
                 isMandatory: false,
-                Err: commonState?.validated && !interviewState?.candidateData?.image_show_ui?.length ? "Recent photo required" : null
+                // Err: commonState?.validated && !interviewState?.candidateData?.image_show_ui?.length ? "Recent photo required" : null
             },
             {
                 name: "Address",

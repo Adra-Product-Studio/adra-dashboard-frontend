@@ -4,7 +4,9 @@ import {
     create_individual_campaign_ques_pattern, edit_individual_campaign_ques_pattern,
     delete_individual_campaign_ques_pattern, getCampaignCandidateDetails,
     getFellowshipCandidates,
-    getSampleTest
+    getSampleTest,
+    delete_campaign_endpoint,
+    delete_candidate_endpoint
 
 
 } from 'Views/Admin/Slice/AdminSlice';
@@ -34,13 +36,38 @@ export const handleCreateCampaign = (params) => async (dispatch) => {
         dispatch(postOrEditCampign({ type: "request" }))
         const { data } = await axiosInstance.post("/campaign", params)
 
-        if (data?.error_code === 0) dispatch(postOrEditCampign({ type: "response", data: data?.data }))
+        if (data?.error_code === 0) dispatch(postOrEditCampign({ type: "response", data: { ...data?.data, type: "create" } }))
         else dispatch(postOrEditCampign({ type: "failure", message: data?.message }))
     } catch (Err) {
         dispatch(postOrEditCampign({ type: "failure", message: Err?.message }))
     }
 }
 
+// Edit Campaign
+export const handleEditCampaign = (params) => async (dispatch) => {
+    try {
+        dispatch(postOrEditCampign({ type: "request" }))
+        const { data } = await axiosInstance.put("/campaign", params)
+
+        if (data?.error_code === 0) dispatch(postOrEditCampign({ type: "response", data: { ...data?.data, type: "edit" } }))
+        else dispatch(postOrEditCampign({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(postOrEditCampign({ type: "failure", message: Err?.message }))
+    }
+}
+
+// Delete campaign
+export const handleDeleteCampaign = (params) => async (dispatch) => {
+    try {
+        dispatch(delete_campaign_endpoint({ type: "request" }))
+        const { data } = await axiosInstance.delete(`/delete_campaign/${params?._id}`)
+
+        if (data?.error_code === 0) dispatch(delete_campaign_endpoint({ type: "response", data: { _id: params?._id } }))
+        else dispatch(delete_campaign_endpoint({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(delete_campaign_endpoint({ type: "failure", message: Err?.message }))
+    }
+}
 
 // Get individual Campaign
 export const handleGetIndividualCampaign = (params) => async (dispatch) => {
@@ -57,7 +84,7 @@ export const handleGetIndividualCampaign = (params) => async (dispatch) => {
 
 
 // Get sample test
-export const handleGetSampleTest= (params) => async (dispatch) => {
+export const handleGetSampleTest = (params) => async (dispatch) => {
     try {
         dispatch(getSampleTest({ type: "request" }))
         const { data } = await axiosInstance.get(`/campaign/${params?.campaign_id}/generate_sample_test`)
@@ -167,5 +194,17 @@ export const handleGetFellowshipCandidatesDetails = (params) => async (dispatch)
     } catch (Err) {
         dispatch(getFellowshipCandidates({ type: "failure", message: Err?.message }))
     }
+}
 
+// Delete candidate
+export const handleDeleteCandidate = (params) => async (dispatch) => {
+    try {
+        dispatch(delete_candidate_endpoint({ type: "request" }))
+        const { data } = await axiosInstance.delete(`/delete_candidate/${params?._id}`)
+
+        if (data?.error_code === 0) dispatch(delete_candidate_endpoint({ type: "response", data: { _id: params?._id } }))
+        else dispatch(delete_candidate_endpoint({ type: "failure", message: data?.message }))
+    } catch (Err) {
+        dispatch(delete_candidate_endpoint({ type: "failure", message: Err?.message }))
+    }
 }

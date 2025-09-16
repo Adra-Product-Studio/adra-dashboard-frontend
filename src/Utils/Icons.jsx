@@ -10,6 +10,7 @@ import { IoWarningOutline } from "react-icons/io5";
 const closeTestIcon = <RiErrorWarningLine className="fs-1" />
 const editIcon = <MdOutlineEdit size={22} className="text-primary" />
 const deleteIcon = <MdOutlineDelete size={22} className="text-danger" />
+const deleteIconLg = <MdOutlineDelete size={45} className="text-danger" />
 const mailIcon = <CiMail size={20} />
 const locationIcon = <SlLocationPin size={20} />
 const phoneIcon = <TbPhone size={20} />
@@ -122,7 +123,7 @@ const Icons = {
     circularIcon, invoicesIcon, notesIcon, doocumentIcon,
     profileDefautUserIcon, notificationIcon, menuIcon,
     campaign_calender_icon, campaign_total_candidate_icon, campaign_confirm_candidate_icon,
-    editIcon, deleteIcon, mailIcon, locationIcon, phoneIcon, qualificationIcon, warningIcon
+    editIcon, deleteIcon, mailIcon, locationIcon, phoneIcon, qualificationIcon, warningIcon, deleteIconLg
 }
 
 export default Icons
