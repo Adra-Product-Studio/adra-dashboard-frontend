@@ -187,7 +187,7 @@ export function OverallModel() {
                                 clickFunction={adminState?.create_campaign?._id ?
                                     () => dispatch(handleEditCampaign(adminState?.create_campaign))
                                     :
-                                    () => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date }))}
+                                    () => dispatch(handleCreateCampaign({ job_title: adminState?.create_campaign?.job_title, interview_date: adminState?.create_campaign?.interview_date, test_time_duration: adminState?.create_campaign?.test_time_duration }))}
                             />
                         </div>
 

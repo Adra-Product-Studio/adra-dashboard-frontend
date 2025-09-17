@@ -58,7 +58,7 @@ const CampaignCard = ({
                 <p className={placeholder ? "placeholder w-50 py-3 rounded mb-0" : 'mb-0 text-secondary fs-13'}>
                     Posted on :
                     {
-                        campaign?.created_at ? IsoStringDateConverter(campaign?.created_at)?.date
+                        campaign?.created_at || campaign?.createdAt ? IsoStringDateConverter(campaign?.created_at || campaign?.createdAt)?.date
                             :
                             ''
                     }

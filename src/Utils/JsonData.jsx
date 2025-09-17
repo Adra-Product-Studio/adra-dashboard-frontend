@@ -617,6 +617,22 @@ const JsonData = () => {
                 isMandatory: true,
                 Err: commonState?.validated && !adminState?.create_campaign?.interview_date ? "Interview date required" : ''
             },
+            {
+                name: "Test time duration (in mins)",
+                type: "text",
+                is_min: true,
+                category: "input",
+                placeholder: "",
+                divClassName: 'col-12 p-1',
+                value: adminState?.create_campaign?.test_time_duration || '',
+                change: (e) => {
+                    if (/^\d*$/.test(e.target.value) ){
+                        dispatch(handleCreateCampaignOnChnage({ test_time_duration: e.target.value }))
+                    }
+                },
+                isMandatory: true,
+                Err: commonState?.validated && !adminState?.create_campaign?.test_time_duration ? "Test time duration required" : ''
+            },
         ],
 
         //                                                                 Admin Assign question
