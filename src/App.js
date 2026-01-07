@@ -20,7 +20,6 @@ import Sample_test from "Views/Admin/Docs/Campaign/Sample_test";
 
 
 const App = () => {
-  console.log("App Rendered");
 
   return (
     <HelmetProvider>
